@@ -1,29 +1,25 @@
 <template>
-    <div>
-        <line-chart/>
-        {{ count }}
+    <div v-if="dataStore.loaded">
+        <!-- <line-chart/> -->
+        <polar-chart/>
+        {{ dataStore.count }}
     </div>
 </template>
 
 <script>
 
-import PolarChart from './charts/Polar.vue'
-import LineChart from './charts/Line.vue'
+import PolarChart from '@/charts/Polar.vue'
+import LineChart from '@/charts/Line.vue'
 
-import { useCounterStore } from './stores/data.js'
+import { dataStore } from '@/stores/data.js'
 
 export default {
     setup() {
-        const counter = useCounterStore()
-
-        counter.count++
-        // with autocompletion ✨
-        counter.$patch({ count: counter.count + 1 })
-        // or using an action instead
-        counter.increment()
+        const ds = dataStore()
+        ds.load()
 
         return {
-            count: counter.count
+            dataStore: ds
         }
     },
     components: {

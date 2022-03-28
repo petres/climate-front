@@ -89,6 +89,11 @@ module.exports = (env) => {
             liveReload: true,
             hot: false
         },
+        resolve: {
+            alias: {
+                '@': resolve('src'),
+            },
+        },
         plugins: [
             new VueLoaderPlugin(),
             new HtmlWebpackPlugin({
