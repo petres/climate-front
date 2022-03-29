@@ -15,7 +15,21 @@ export const dataStore = defineStore('data', {
                         avg5: +d.avg5/10,
                         avg10: +d.avg10/10,
                     }));
-                    this.loaded = true;
+
+                    axios
+                        .get(`data/vienna-daily.json`)
+                        .then(response => {
+                            this.daily = response.data.map(d => ({
+                                date: new Date(d.date),
+                                value: +d.value/10,
+                            }));
+                            this.loaded = true;
+                        })
+
+
+
+
+
                     // console.log(this.data)
                 })
 

@@ -1,8 +1,11 @@
 <template>
     <div ref="container">
-        <svg class='pie-chart' :height='height' :width='width'>
-            <!-- <rect :height='height' :width='width' style="fill:#DDD"/> -->
-            <g :transform='`translate(${width/2}, ${height/2})`'></g>
+        <svg class='polar-chart' :height='height' :width='width'>
+            <g :transform='`translate(${width/2}, ${height/2})`'>
+                <path/>
+                <g class='x-axis'></g>
+                <g class='y-axis'></g>
+            </g>
         </svg>
     </div>
 </template>
@@ -16,7 +19,7 @@ export default {
     setup() {
         const ds = dataStore()
         return {
-            data: ds.data.filter(d => d.date.getFullYear() > 1)
+            data: ds.daily.filter(d => d.date.getFullYear() > 2020)
         }
     },
     data: () => ({
@@ -35,35 +38,35 @@ export default {
         const innerRadius = 70;
         const outerRadius = 300;
 
-        const svg = d3.select("svg.pie-chart")
+        const svg = d3.select("svg.polar-chart")
             .attr("width", this.width)
             .attr("height", this.width)
 
         const svgI = svg.select("g")
 
-        const x = d3.scaleUtc()
-            .domain([Date.UTC(2000, 0, 1), Date.UTC(2001, 0, 1) - 1])
+        const x = d3.scaleTime()
+            .domain([new Date(2000, 0, 1), new Date(2001, 0, 1) - 1])
             .range([0, 2 * Math.PI])
 
         const y = d3.scaleLinear()
             .domain([d3.min(this.data, d => d.value)-5, d3.max(this.data, d => d.value) + 5])
             .range([ innerRadius, outerRadius]);
 
+
+        console.log(this.data.map(e => ({date: e.date, x: x(e.date)})))
         // const def = v => typeof v == 'number' && !isNaN(v)
 
-        svgI.append("path")
+        svgI.select("path")
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
             .attr("d", d3.lineRadial()
                 // .defined(d => def(d.value))
                 .radius(d => y(d.value))
-                .angle(d => x(d.date))
+                .angle(d => x(new Date(d.date).setFullYear(2000)))
             (this.data));
 
         const xAxis = g => g
-            .attr("font-family", "sans-serif")
-            .attr("font-size", 12)
             .call(g => g.selectAll("g")
                 .data(x.ticks())
                 .join("g")
@@ -81,8 +84,8 @@ export default {
                     .datum(d => [d, d3.utcMonth.offset(d, 1)])
                     .attr("fill", "none")
                     .attr("d", ([a, b]) => `
-                    M${d3.pointRadial(x(a), outerRadius - 10)}
-                    A${outerRadius - 10},${outerRadius - 10} 0,0,1 ${d3.pointRadial(x(b), outerRadius - 10)}
+                    M${d3.pointRadial(x(a), outerRadius)}
+                    A${outerRadius},${outerRadius} 0,0,1 ${d3.pointRadial(x(b), outerRadius)}
                     `)
                 )
                 .call(g => g.append("text")
@@ -93,13 +96,10 @@ export default {
                 )
             )
 
-        svgI.append("g")
+        svgI.select('.x-axis')
             .call(xAxis);
 
         const yAxis = g => g
-            .attr("text-anchor", "middle")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", 10)
             .call(g => g.selectAll("g")
                 .data(y.ticks(6))
                 .join("g")
@@ -124,8 +124,21 @@ export default {
                 )
             )
 
-            svgI.append("g")
+            svgI.select('.y-axis')
                 .call(yAxis);
     }
 }
 </script>
+
+<style scoped>
+    g.x-axis {
+        font-size: 12px;
+        font-family: 'Arial'
+    }
+
+    g.y-axis {
+        font-size: 10px;
+        font-family: 'Arial';
+        text-anchor: middle;
+    }
+</style>
