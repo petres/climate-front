@@ -1,21 +1,21 @@
 <template>
     <div v-if="dataStore.loaded">
-        <!-- <line-chart/> -->
-        <polar-chart/>
-        {{ dataStore.count }}
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
 
-import PolarChart from '@/charts/Polar.vue'
-import LineChart from '@/charts/Line.vue'
+// import PolarChart from '@/charts/Polar.vue'
+// import LineChart from '@/charts/Line.vue'
 
-import { dataStore } from '@/stores/data.js'
+import Station from '@/Station.vue'
+
+import { baseStore } from '@/stores/base.js'
 
 export default {
     setup() {
-        const ds = dataStore()
+        const ds = baseStore()
         ds.load()
 
         return {
@@ -23,7 +23,8 @@ export default {
         }
     },
     components: {
-        PolarChart, LineChart
+        // PolarChart, LineChart
+        Station
     },
     created: function() {
         // this.$store.dispatch('init')

@@ -13,13 +13,14 @@
 <script>
 
 import * as d3 from "d3";
-import { dataStore } from '@/stores/data.js'
+import { stationStore } from '@/stores/station.js'
 
 export default {
     setup() {
-        const ds = dataStore()
+        const ss = stationStore();
+
         return {
-            data: ds.daily.filter(d => d.date.getFullYear() > 2020)
+            data: ss.data.daily.filter(d => d.date.getFullYear() > 2000)
         }
     },
     data: () => ({
@@ -53,18 +54,20 @@ export default {
             .range([ innerRadius, outerRadius]);
 
 
-        console.log(this.data.map(e => ({date: e.date, x: x(e.date)})))
+        // console.log(this.data.map(e => ({date: e.date, x: x(e.date)})))
         // const def = v => typeof v == 'number' && !isNaN(v)
 
         svgI.select("path")
+            .datum(this.data)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
-            .attr("d", d3.lineRadial()
+            .attr("d", d => d3.lineRadial()
                 // .defined(d => def(d.value))
                 .radius(d => y(d.value))
-                .angle(d => x(new Date(d.date).setFullYear(2000)))
-            (this.data));
+                .angle(d => x(new Date(d.date).setFullYear(2000)))(d)
+            );
+
 
         const xAxis = g => g
             .call(g => g.selectAll("g")

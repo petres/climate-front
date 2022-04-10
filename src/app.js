@@ -4,16 +4,17 @@ import '../assets/styles/app.scss'
 // import 'bootstrap';
 
 import App from './App.vue'
+import Station from './Station.vue'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { createWebHashHistory, createRouter } from 'vue-router'
+import { createWebHistory, createRouter } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: [
     { path: '/', component: App },
-    { path: '/about', component: App },
+    { path: '/station/:id', component: Station },
   ],
 })
 

@@ -9,13 +9,13 @@
 <script>
 
 import * as d3 from "d3";
-import { dataStore } from '@/stores/data.js'
+import { stationStore } from '@/stores/station.js'
 
 export default {
     setup() {
-        const ds = dataStore()
+        const ss = stationStore()
         return {
-            data: ds.data
+            data: ss.data.monthly
         }
     },
     data: () => ({
