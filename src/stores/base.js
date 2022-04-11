@@ -6,6 +6,10 @@ const sources = {
         src: 'data/stations.json',
         trans: d => Object.assign({}, ...d.map((x) => ({[x.id]: x}))),
     },
+    indicators: {
+        src: 'data/indices.json',
+        trans: d => d,
+    },
 };
 
 

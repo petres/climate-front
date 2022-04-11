@@ -6,6 +6,7 @@ import '../assets/styles/app.scss'
 import App from './App.vue'
 import Overview from './Overview.vue'
 import Station from './Station.vue'
+import Indicator from './Indicator.vue'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -16,6 +17,7 @@ const router = createRouter({
   routes: [
     { path: '/', component: Overview },
     { path: '/station/:id', component: Station, name: 'station' },
+    { path: '/station/:id/:ind', component: Indicator, name: 'indicator' },
   ],
 })
 

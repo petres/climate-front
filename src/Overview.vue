@@ -6,7 +6,7 @@
             </router-link>
             &nbsp;
             <template v-for="i in s.indices">
-                <router-link :to="{ name: 'station', params: { id: s.id }}">{{ i }}</router-link>&nbsp;
+                <router-link :to="{ name: 'indicator', params: { id: s.id, ind: i }}">{{ i }}</router-link>&nbsp;
             </template>
         </div>
     </div>
