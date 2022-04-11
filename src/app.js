@@ -4,6 +4,7 @@ import '../assets/styles/app.scss'
 // import 'bootstrap';
 
 import App from './App.vue'
+import Overview from './Overview.vue'
 import Station from './Station.vue'
 
 import { createApp } from 'vue'
@@ -13,8 +14,8 @@ import { createWebHistory, createRouter } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: App },
-    { path: '/station/:id', component: Station },
+    { path: '/', component: Overview },
+    { path: '/station/:id', component: Station, name: 'station' },
   ],
 })
 
