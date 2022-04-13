@@ -4,7 +4,13 @@ import axios from 'axios';
 const sources = {
     stations: {
         src: 'data/stations.json',
-        trans: d => Object.assign({}, ...d.map((x) => ({[x.id]: x}))),
+        trans: d => {
+            d.forEach(s => {
+                s.coords.reverse();
+            });
+
+            return Object.assign({}, ...d.map((x) => ({[x.id]: x})))
+        },
     },
     indicators: {
         src: 'data/indices.json',

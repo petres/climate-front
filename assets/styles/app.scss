@@ -1,1 +1,9 @@
 @use "sass:map";
+
+@import 'map';
+
+
+body {
+    margin: 0;
+    padding: 0;
+}

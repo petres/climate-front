@@ -24,6 +24,7 @@
     "favicons": "^6.2.2",
     "favicons-webpack-plugin": "^5.0.2",
     "html-webpack-plugin": "^5.5.0",
+    "maplibre-gl": "^2.1.9",
     "mini-css-extract-plugin": "^2.4.5",
     "pinia": "^2.0.12",
     "postcss-loader": "^6.2.1",
