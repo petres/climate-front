@@ -21,7 +21,7 @@ module.exports = (env) => {
             './src/app.js',
         ],
         output: {
-            filename: 'app.min.[hash].js'
+            filename: 'app.min.[fullhash].js'
         },
         module: {
             rules: [

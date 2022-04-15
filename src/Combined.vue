@@ -1,7 +1,7 @@
 <template>
     <div class="combined">
         <station v-if='id' :id='id'/>
-        <maap/>
+        <maap :id='id'/>
     </div>
 </template>
 

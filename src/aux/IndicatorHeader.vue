@@ -16,7 +16,6 @@ export default {
     },
     computed: {
       indicator () {
-          console.log(this.ind)
           return this.baseStore.data.indicators[this.ind];
       }
     }

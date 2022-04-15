@@ -38,7 +38,7 @@ export default {
         const cw = this.$refs.container.clientWidth;
         // this.width = Math.min(cw, 5 * this.radius);
         this.width = cw;
-        this.radius = Math.min(cw/2, 200);
+        this.radius = Math.min(cw/2 - 10, 200);
         this.height = this.radius*2 + 20;
 
         // console.log(this.data.map(d => d.date.getFullYear()))
@@ -158,14 +158,3 @@ export default {
     },
 }
 </script>
-
-<style scoped>
-    g.x-axis {
-        font-size: 12px;
-    }
-
-    g.y-axis {
-        font-size: 10px;
-        text-anchor: middle;
-    }
-</style>

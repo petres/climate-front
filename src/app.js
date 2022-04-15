@@ -19,7 +19,7 @@ const router = createRouter({
     { path: '/list', component: List, name: 'overview' },
     { path: '/station/:id', component: Combined, name: 'station', props: true },
     { path: '/', component: Combined, name: 'map' },
-    { path: '/station/:id/:ind', component: Indicator, name: 'indicator' },
+    { path: '/station/:id/:ind', component: Indicator, name: 'indicator', props: true },
   ],
 })
 
