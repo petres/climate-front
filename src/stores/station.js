@@ -24,24 +24,22 @@ const sources = {
 
 
 export const stationStore = defineStore('station', {
-    state: () => ({ data: {} }),
+    state: () => ({ monthly: {}, daily: {} }),
     getters: {
-        loaded: (s) => Object.keys(sources).filter(d => !(d in s.data)).length == 0,
+        loaded: (s) => (p) => p.id in s[p.period] && ind in s[p.period][p.id],
+        data: (s) => (p) => s[p.period][p.id][p.ind]
     },
     actions: {
-        load(stationId, ind = 'tg') {
-            console.log(`station store: load ${stationId}`)
-            Object.keys(sources).forEach(d => {
-                axios
-                    .get(`/data/stations/${stationId}/${ind}-${sources[d].src}`, { responseType: 'text',})
-                    .then(response => {
-                        this.data[d] = sources[d].trans(d3.csvParse(response.data))
-                    })
-            });
-        },
-        clear() {
-            console.log(`station store: clear`)
-            this.data = {};
+        load(p) {
+            // console.log(`station store: load ${id} ${ind} ${period}`)
+            return axios
+                .get(`/data/stations/${p.id}/${p.ind}-${sources[p.period].src}`, { responseType: 'text',})
+                .then(response => {
+                    if (!(p.id in this[p.period]))
+                        this[p.period][p.id] = {}
+
+                    this[p.period][p.id][p.ind] = sources[p.period].trans(d3.csvParse(response.data))
+                })
         }
     },
 })

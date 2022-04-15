@@ -1,6 +1,8 @@
 @import '~maplibre-gl/dist/maplibre-gl.css';
+
 .map-wrap {
     position: relative;
+    left: 100%;
     width: 100%;
     height: calc(100vh - 0px); /* calculate height of the screen minus the heading */
 }
@@ -20,4 +22,59 @@
 
 .mapboxgl-marker {
     cursor: pointer;
+}
+
+
+.combined {
+    .map-wrap {
+        position: absolute;
+        left: 40%;
+        width: 60%;
+    }
+
+    .station {
+        position: absolute;
+        width: 40%;
+        max-height: 100vh;
+        overflow-y: scroll;
+        .station-inner {
+            margin: 20px;
+        }
+    }
+}
+
+.indicator-header,
+.station-header {
+    position: relative;
+    height: 60px;
+    h2 {
+        padding: 0;
+        margin: 0;
+        display: inline-block;
+    }
+    .sub {
+        color: #444;
+        font-size: 0.8em;
+        top: -1px;
+        display: block;
+        position: relative;
+    }
+}
+
+.indicator-header {
+    height: 40px;
+    h2 {
+        padding: 0 3px;
+        font-size: 1.1em;
+        font-family: monospace;
+        background-color: black;
+        color: white;
+    }
+}
+
+.station-header {
+    height: 60px;
+    h2 {
+        font-size: 1.3em
+    }
 }

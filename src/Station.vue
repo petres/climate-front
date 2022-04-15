@@ -1,47 +1,51 @@
 <template>
-    <div v-if="stationStore.loaded">
-        <h2>{{ baseStore.data.stations[id].id }} {{ baseStore.data.stations[id].name }}</h2>
-        <line-chart/>
-        <polar-chart/>
+    <div class="station">
+        <div class="station-inner">
+            <station-header :id='id'/>
+            <indicator :id='id' ind='tg'/>
+            <indicator v-if='station.indices.includes("b")' :id='id' ind='hu'/>
+            <indicator v-if='station.indices.includes("rr")' :id='id' ind='rr'/>
+        </div>
     </div>
 </template>
 
 <script>
+import StationHeader from '@/aux/StationHeader.vue'
 
-import PolarChart from '@/charts/Polar.vue'
-import LineChart from '@/charts/Line.vue'
+import Indicator from '@/Indicator.vue'
 
 import { baseStore } from '@/stores/base.js'
 import { stationStore } from '@/stores/station.js'
 
 export default {
-    data() {
-        return {
-            id: null
-        }
-    },
+    props: ['id'],
     setup() {
         return {
             baseStore: baseStore(),
             stationStore: stationStore(),
         }
     },
+    computed: {
+        station () {
+            return this.baseStore.station(this.id);
+        }
+    },
     components: {
-        PolarChart, LineChart
+        StationHeader, Indicator
     },
     created: function() {
-        this.$watch(
-            () => this.$route.params,
-            (toParams, previousParams) => {
-                // console.log(`Loading station: ${this.$route.params.id}`)
-                if (this.$route.params.id)
-                    this.stationStore.load(this.$route.params.id);
-                else
-                    this.stationStore.clear();
-                this.id = this.$route.params.id
-            },
-            { immediate : true}
-        )
+        // this.$watch(
+        //     () => this.$route.params,
+        //     (toParams, previousParams) => {
+        //         // console.log(`Loading station: ${this.$route.params.id}`)
+        //         if (this.$route.params.id)
+        //             this.stationStore.load(this.$route.params.id);
+        //         else
+        //             this.stationStore.clear();
+        //         this.id = this.$route.params.id
+        //     },
+        //     { immediate : true}
+        // )
     }
 }
 </script>
