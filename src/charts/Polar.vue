@@ -11,7 +11,6 @@
 </template>
 
 <script>
-
 import * as d3 from "d3";
 import { stationStore } from '@/stores/station.js'
 import { baseStore } from '@/stores/base.js'
@@ -31,16 +30,16 @@ export default {
     data: () => ({
         width: 0,
         height: 0,
-        radius: 150,
         innerRadius: 50,
-        outerRadius: 200,
+        radius: 200,
         g: null,
     }),
     mounted() {
-        const cw = this.$refs.container.clientWidth
-        this.width = Math.min(cw, 5 * this.radius)
-        this.height = this.width
-        this.radius = this.height / 10
+        const cw = this.$refs.container.clientWidth;
+        // this.width = Math.min(cw, 5 * this.radius);
+        this.width = cw;
+        this.radius = Math.min(cw/2, 200);
+        this.height = this.radius*2 + 20;
 
         // console.log(this.data.map(d => d.date.getFullYear()))
         const svg = d3.select(this.$refs.container).select("svg.polar-chart")
@@ -77,7 +76,7 @@ export default {
 
             const y = d3.scaleLinear()
                 .domain([d3.min(this.data, d => d.value)-5, d3.max(this.data, d => d.value) + 5])
-                .range([ this.innerRadius, this.outerRadius]);
+                .range([ this.innerRadius, this.radius]);
 
 
             // console.log(this.data.map(e => ({date: e.date, x: x(e.date)})))
@@ -103,7 +102,7 @@ export default {
                         .attr("stroke-opacity", 0.2)
                         .attr("d", d => `
                         M${d3.pointRadial(x(d), this.innerRadius)}
-                        L${d3.pointRadial(x(d), this.outerRadius)}
+                        L${d3.pointRadial(x(d), this.radius)}
                         `)
                     )
                     .call(g => g.append("path")
@@ -111,8 +110,8 @@ export default {
                         .datum(d => [d, d3.utcMonth.offset(d, 1)])
                         .attr("fill", "none")
                         .attr("d", ([a, b]) => `
-                        M${d3.pointRadial(x(a), this.outerRadius)}
-                        A${this.outerRadius},${this.outerRadius} 0,0,1 ${d3.pointRadial(x(b), this.outerRadius)}
+                        M${d3.pointRadial(x(a), this.radius)}
+                        A${this.radius},${this.radius} 0,0,1 ${d3.pointRadial(x(b), this.radius)}
                         `)
                     )
                     .call(g => g.append("text")

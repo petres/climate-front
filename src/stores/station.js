@@ -26,7 +26,7 @@ const sources = {
 export const stationStore = defineStore('station', {
     state: () => ({ monthly: {}, daily: {} }),
     getters: {
-        loaded: (s) => (p) => p.id in s[p.period] && ind in s[p.period][p.id],
+        loaded: (s) => (p) => p.id in s[p.period] && p.ind in s[p.period][p.id],
         data: (s) => (p) => s[p.period][p.id][p.ind]
     },
     actions: {

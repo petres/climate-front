@@ -1,7 +1,6 @@
 <template>
     <div class="indicator-header">
-        <h2>{{ ind.toUpperCase() }}</h2>
-        <span class='sub'>{{ indicator.label }}</span>
+        <h2>{{ ind.toUpperCase() }}</h2><span class='sub'>{{ indicator.label }}</span>
     </div>
 </template>
 

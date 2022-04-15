@@ -28,13 +28,13 @@
 .combined {
     .map-wrap {
         position: absolute;
-        left: 40%;
-        width: 60%;
+        left: 30%;
+        width: 70%;
     }
 
     .station {
         position: absolute;
-        width: 40%;
+        width: 30%;
         max-height: 100vh;
         overflow-y: scroll;
         .station-inner {
@@ -46,7 +46,6 @@
 .indicator-header,
 .station-header {
     position: relative;
-    height: 60px;
     h2 {
         padding: 0;
         margin: 0;
@@ -61,19 +60,27 @@
     }
 }
 
-.indicator-header {
-    height: 40px;
-    h2 {
-        padding: 0 3px;
-        font-size: 1.1em;
-        font-family: monospace;
-        background-color: black;
-        color: white;
+.indicator {
+    margin-bottom: 25px;
+    .indicator-header {
+        height: 20px;
+        h2 {
+            padding: 0 3px;
+            font-size: 1.1em;
+            font-family: monospace;
+            background-color: black;
+            color: white;
+            display: inline;
+        }
+        .sub {
+            margin-left: 5px;
+            display: inline;
+        }
     }
 }
 
 .station-header {
-    height: 60px;
+    height: 70px;
     h2 {
         font-size: 1.3em
     }
