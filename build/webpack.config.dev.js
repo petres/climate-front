@@ -105,6 +105,7 @@ module.exports = (env) => {
             new CopyWebpackPlugin({
                 patterns: [
                   { from: "assets/data", to: "data" },
+                  { from: "assets/.htaccess", to: "" },
                   // { from: "assets/docs", to: "docs" },
                   // { from: "assets/img/logo.jpg", to: "img/logo.jpg" },
                 ],
