@@ -9,6 +9,43 @@ svg {
     }
 }
 
-svg.polar-chart {
-    margin-top: 10px;
+
+.polar-chart-container {
+    svg {
+        margin-top: 10px;
+
+        g.path-years path {
+            fill: none;
+            stroke: #AAA;
+            stroke-width: 1;
+            opacity: 0.2;
+            &.active {
+                stroke: steelblue;
+                stroke-width: 2;
+                opacity: 1;
+            }
+        }
+    }
+    .slider {
+        margin-top: 8px;
+        position: relative;
+        input {
+            width: calc(100% - 160px);
+            left: 80px;
+            position: relative;
+        }
+        span {
+            position: absolute;
+            right: 0;
+            top: 2px;
+            width: 80px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        select {
+            position: absolute;
+            width: 70px;
+        }
+    }
 }

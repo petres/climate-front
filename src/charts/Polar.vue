@@ -1,8 +1,19 @@
 <template>
-    <div ref="container">
+    <div ref="container" class='polar-chart-container'>
+        <div class='slider'>
+            <select v-model='time'>
+                 <option value="monthly">Monthly</option>
+                 <option value="daily">Daily</option>
+            </select>
+            <input type="range" :min="minYear" :max="maxYear" v-model='year'>
+            <span>{{ year }}</span>
+        </div>
         <svg class='polar-chart' :height='height' :width='width' :style="{opacity: stationStore.loaded(p) ? 1 : 0.3}">
             <g :transform='`translate(${width/2}, ${height/2})`'>
-                <path/>
+                <g class='path-years'>
+                    <path v-for="(v, k) in yearData" :d='d3.lineRadial().radius(d => scales.y(d.value)).angle(d => scales.x(new Date(d.date).setFullYear(2000)))(v)' />
+                    <path v-if="yearData[year]" class="active" :d='d3.lineRadial().radius(d => scales.y(d.value)).angle(d => scales.x(new Date(d.date).setFullYear(2000)))(yearData[year])' />
+                </g>
                 <g class='x-axis'></g>
                 <g class='y-axis'></g>
             </g>
@@ -24,15 +35,33 @@ export default {
         }
     },
     computed: {
-        p () { return {id: this.id, ind: this.ind, period: 'daily'} },
+        p () { return {id: this.id, ind: this.ind, period: this.time} },
         unit () { return this.baseStore.indicator(this.ind).unit },
+        yearData () {
+            let t = {};
+            this.data.forEach(d => {
+                const year = d.date.getFullYear()
+                if (!(year in t))
+                    t[year] = [];
+                t[year].push(d);
+            });
+            // console.log(yearData)
+            return t;
+        }
     },
     data: () => ({
+        d3: d3,
+        time: 'daily',
+        minYear: null,
+        maxYear: 2022,
+        year: 2022,
         width: 0,
         height: 0,
         innerRadius: 50,
         radius: 200,
         g: null,
+        scales: {},
+        data: []
     }),
     mounted() {
         const cw = this.$refs.container.clientWidth;
@@ -49,37 +78,49 @@ export default {
         this.g = svg.select("g")
 
         this.$watch(
-            () => [this.id, this.ind],
+            () => [this.id, this.ind, this.time],
             (n, o) => {
-                this.stationStore.onLoaded(this.p, this.plot)
+                this.stationStore.onLoaded(this.p, d => {
+                    this.data = d
+                    console.log(this.yearData)
+                    this.plotBase();
+                    // this.plotPath();
+                })
             },
             { immediate : true}
         )
+
+        // this.$watch(
+        //     () => [this.year],
+        //     (n, o) => {
+        //         this.plotPath()
+        //     }
+        // )
     },
     methods: {
-        plot(data) {
-            data = data.filter(d => d.date.getFullYear() == 2021)
+        plotBase(d) {
+            const data = this.data;
 
-            const x = d3.scaleTime()
+            [this.minYear, this.maxYear] = d3.extent(data.map(d => d.date.getFullYear()));
+            this.year = this.maxYear;
+
+            console.log([this.minYear, this.maxYear])
+
+            const x = this.scales.x = d3.scaleTime()
                 .domain([new Date(2000, 0, 1), new Date(2001, 0, 1) - 1])
                 .range([0, 2 * Math.PI])
 
-            const y = d3.scaleLinear()
-                .domain([d3.min(data, d => d.value)-5, d3.max(data, d => d.value) + 5])
-                .range([ this.innerRadius, this.radius]);
+            let [minValue, maxValue] = d3.extent(data, d => d.value)
 
-            // console.log(this.data.map(e => ({date: e.date, x: x(e.date)})))
-            // const def = v => typeof v == 'number' && !isNaN(v)
-            this.g.select("path")
-                .datum(data)
-                .attr("fill", "none")
-                .attr("stroke", "steelblue")
-                .attr("stroke-width", 1.5)
-                .attr("d", d => d3.lineRadial()
-                    // .defined(d => def(d.value))
-                    .radius(d => y(d.value))
-                    .angle(d => x(new Date(d.date).setFullYear(2000)))(d)
-                );
+            maxValue += (maxValue - minValue)/10
+            if (!['rr', 'ss'].includes(this.ind))
+                minValue -= (maxValue - minValue)/10
+
+
+            const y = this.scales.y = d3.scaleLinear()
+                .domain([minValue, maxValue])
+                .range([this.innerRadius, this.radius]);
+
 
             const xAxis = g => g
                 .call(g => g.selectAll("g")
@@ -143,7 +184,18 @@ export default {
             this.g.select('.y-axis').selectAll("*").remove();
             this.g.select('.y-axis')
                 .call(yAxis);
-        }
+        },
+        // plotPath() {
+        //     console.log(`plotPath ${this.year}`)
+        //
+        //     const x = this.scales.x;
+        //     const y = this.scales.y;
+        //
+        //     // console.log(yearData)
+        //     // console.log(this.data.map(e => ({date: e.date, x: x(e.date)})))
+        //     // const def = v => typeof v == 'number' && !isNaN(v)
+        //
+        // }
     },
 }
 </script>

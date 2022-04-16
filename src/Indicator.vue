@@ -1,7 +1,7 @@
 <template>
     <div class="indicator" v-if="id && ind && stationStore.loaded">
         <indicator-header :ind='ind'/>
-        <line-chart :id='id' :ind='ind'/>
+        <!-- <line-chart :id='id' :ind='ind'/> -->
         <polar-chart :id='id' :ind='ind'/>
     </div>
 </template>

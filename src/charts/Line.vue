@@ -19,7 +19,7 @@ export default {
     },
     data: () => ({
         m: {
-            t: 50, r: 50, b: 50, l: 50
+            t: 50, r: 20, b: 50, l: 20
         },
         width: 0,
         height: 200,

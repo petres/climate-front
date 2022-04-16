@@ -42,8 +42,8 @@ export const stationStore = defineStore('station', {
                 })
         },
         onLoaded(p, f) {
-            console.log('onLoaded')
-            console.log(p)
+            // console.log('onLoaded')
+            // console.log(p)
             const fa = () => f(this.data(p))
             if (this.loaded(p)) {
                 fa()
