@@ -3,6 +3,7 @@
         <div class="station-inner">
             <station-header :id='id'/>
             <indicator v-if='station.indices.includes("tg")' :id='id' ind='tg'/>
+            <indicator v-if='station.indices.includes("tn")' :id='id' ind='tn'/>
             <indicator v-if='station.indices.includes("rr")' :id='id' ind='rr'/>
             <indicator v-if='station.indices.includes("ss")' :id='id' ind='ss'/>
         </div>

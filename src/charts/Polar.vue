@@ -1,6 +1,6 @@
 <template>
     <div ref="container">
-        <svg class='polar-chart' :height='height' :width='width'>
+        <svg class='polar-chart' :height='height' :width='width' :style="{opacity: stationStore.loaded(p) ? 1 : 0.3}">
             <g :transform='`translate(${width/2}, ${height/2})`'>
                 <path/>
                 <g class='x-axis'></g>
@@ -51,38 +51,27 @@ export default {
         this.$watch(
             () => [this.id, this.ind],
             (n, o) => {
-                // console.log(`Polar watch: ${id}, ${ind}`)
-                console.log(this.p)
-                if (this.stationStore.loaded(this.p)) {
-                    this.plot()
-                } else {
-                    this.stationStore.load(this.p).then(
-                        this.plot
-                    )
-                }
+                this.stationStore.onLoaded(this.p, this.plot)
             },
             { immediate : true}
         )
     },
     methods: {
-        plot() {
-            this.data = this.stationStore.data(this.p).filter(d => d.date.getFullYear() == 2021)
-
-            // console.log(`Id: ${this.id}, Ind: ${this.ind}`)
+        plot(data) {
+            data = data.filter(d => d.date.getFullYear() == 2021)
 
             const x = d3.scaleTime()
                 .domain([new Date(2000, 0, 1), new Date(2001, 0, 1) - 1])
                 .range([0, 2 * Math.PI])
 
             const y = d3.scaleLinear()
-                .domain([d3.min(this.data, d => d.value)-5, d3.max(this.data, d => d.value) + 5])
+                .domain([d3.min(data, d => d.value)-5, d3.max(data, d => d.value) + 5])
                 .range([ this.innerRadius, this.radius]);
-
 
             // console.log(this.data.map(e => ({date: e.date, x: x(e.date)})))
             // const def = v => typeof v == 'number' && !isNaN(v)
             this.g.select("path")
-                .datum(this.data)
+                .datum(data)
                 .attr("fill", "none")
                 .attr("stroke", "steelblue")
                 .attr("stroke-width", 1.5)

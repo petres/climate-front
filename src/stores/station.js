@@ -40,6 +40,16 @@ export const stationStore = defineStore('station', {
 
                     this[p.period][p.id][p.ind] = sources[p.period].trans(d3.csvParse(response.data))
                 })
+        },
+        onLoaded(p, f) {
+            console.log('onLoaded')
+            console.log(p)
+            const fa = () => f(this.data(p))
+            if (this.loaded(p)) {
+                fa()
+            } else {
+                this.load(p).then(fa)
+            }
         }
     },
 })
