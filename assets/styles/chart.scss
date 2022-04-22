@@ -16,14 +16,21 @@ svg {
 
         g.path-years path {
             fill: none;
-            stroke: #AAA;
+            stroke: #BBB;
             stroke-width: 1;
-            opacity: 0.2;
+            opacity: 0.1;
             &.active {
                 stroke: steelblue;
-                stroke-width: 2;
+                stroke-width: 1;
                 opacity: 1;
             }
+        }
+
+        g.path-avg path {
+            fill: none;
+            stroke: #000;
+            stroke-width: 1;
+            opacity: 0.5;
         }
     }
     .slider {

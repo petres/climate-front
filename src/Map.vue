@@ -87,6 +87,8 @@ export default {
 
 
 	        Object.keys(self.baseStore.data.stations).forEach(id => {
+				if (id > 20)
+					return;
 	            // console.log(id)
 	            const s = self.baseStore.station(id);
 	            const m = new Marker({

@@ -17,7 +17,7 @@ const sources = {
         src: 'd.csv',
         trans: d => d.map(d => ({
             date: new Date(d.date),
-            value: +d.value/10,
+            value: +d.avg31/10,
         }))
     },
 };
