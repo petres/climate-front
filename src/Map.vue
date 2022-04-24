@@ -84,10 +84,8 @@ export default {
 			// 	popup.remove();
 			// });
 
-
-
 	        Object.keys(self.baseStore.data.stations).forEach(id => {
-				if (id > 20)
+				if (id > 100)
 					return;
 	            // console.log(id)
 	            const s = self.baseStore.station(id);

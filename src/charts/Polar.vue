@@ -2,8 +2,10 @@
     <div ref="container" class='polar-chart-container'>
         <div class='slider'>
             <select v-model='time'>
-                 <option value="monthly">Monthly</option>
-                 <option value="daily">Daily</option>
+                 <option value="v31">Monthly</option>
+                 <option value="v15">2 Weekks</option>
+                 <option value="v7">Week</option>
+                 <option value="v1">Daily</option>
             </select>
             <input type="range" :min="minYear" :max="maxYear" v-model='year'>
             <span>{{ year }}</span>
@@ -17,6 +19,15 @@
                 <g class='path-avg'></g>
                 <g class='x-axis'></g>
                 <g class='y-axis'></g>
+                <g class='hover' visibility="hidden">
+                    <text class='date' text-anchor='middle' dominant-baseline="middle" transform='translate(0, -20)'/>
+                    <text class='value' text-anchor='middle' dominant-baseline="middle" transform='translate(0, 0)'/>
+                    <text class='diff' text-anchor='middle' dominant-baseline="middle" transform='translate(0, 20)'/>
+                    <circle class='year' r="4"/>
+                    <circle class='avg' r="4"/>
+                </g>
+                <line class='test' stroke="black"/>
+                <circle class='capCircle' :r="radius" opacity="0"/>
             </g>
         </svg>
     </div>
@@ -28,7 +39,10 @@ import { stationStore } from '@/stores/station.js'
 import { baseStore } from '@/stores/base.js'
 
 export default {
-    props: ['id', 'ind'],
+    props: {
+        id: Number,
+        ind: String,
+    },
     setup() {
         return {
             stationStore: stationStore(),
@@ -36,7 +50,7 @@ export default {
         }
     },
     computed: {
-        p () { return {id: this.id, ind: this.ind, period: this.time} },
+        p () { return {id: this.id, ind: this.ind, period: 'daily'} },
         unit () { return this.baseStore.indicator(this.ind).unit },
         yearData () {
             let t = {};
@@ -52,13 +66,13 @@ export default {
     },
     data: () => ({
         d3: d3,
-        time: 'daily',
+        time: 'v7',
         minYear: null,
         maxYear: 2022,
-        year: 2020,
+        year: 2021,
         width: 0,
         height: 0,
-        innerRadius: 30,
+        innerRadius: 50,
         radius: 200,
         g: null,
         scales: {},
@@ -111,11 +125,14 @@ export default {
     },
     methods: {
         plotBase(d) {
-            // console.log('plotbase')
+            const self = this;
+            console.log(`plotbase ${this.time}`)
             const data = this.data;
 
+            const af = d => d[this.time];
+
             [this.minYear, this.maxYear] = d3.extent(data.map(d => d.date.getFullYear()));
-            this.year = this.maxYear;
+            // this.year = this.maxYear;
 
             // console.log([this.minYear, this.maxYear])
 
@@ -124,15 +141,18 @@ export default {
                 .range([0, 2 * Math.PI])
 
             const ext = 1/50;
-            let [minValue, maxValue] = d3.extent(data, d => d.value)
+            let [minValue, maxValue] = d3.extent(data, d => af(d))
 
             maxValue += (maxValue - minValue)*ext
             if (!['rr', 'ss'].includes(this.ind))
                 minValue -= (maxValue - minValue)*ext
 
+            console.log([minValue, maxValue])
+
             const y = this.scales.y = d3.scaleLinear()
                 .domain([minValue, maxValue])
                 .range([this.innerRadius, this.radius]);
+
 
             const radiusText = 1.02*this.radius;
 
@@ -206,47 +226,51 @@ export default {
             this.g.select('.path-years').selectAll("path").remove();
 
             const def = v => typeof v == 'number' && !isNaN(v)
-            const df = d3.timeFormat("%m-%d")
-            const avgData = {}
-            this.data.forEach((d) => {
-                // console.log(d.date)
-                // console.log(df(d.date))
-                if (def(d.value)) {
-                    const f = df(d.date)
-
-                    if (!(f in avgData))
-                        avgData[f] = {s: 0, c: 0}
-
-                    avgData[f].s += d.value
-                    avgData[f].c += 1
-                }
-            });
-            const avgValue = Object.keys(avgData).map(k => {
-                d = avgData[k];
-                return {
-                    value: d.s/d.c,
-                    date: new Date(`2000-${k}`)
-                }
-            }).sort((a, b) => a.date - b.date);
-            // console.log(avgValue)
 
             Object.keys(this.yearData).forEach(k => {
-                // console.log(this.yearData[k])
-                // console.log(k)
-                // this.g.selectAll("path.bla")
-                //     .data(data)
-                //     .enter()
                 this.g.select('.path-years')
                     .append("path")
                     .datum(this.yearData[k])
                     .attr("data-year", k)
                     .attr("d", d3.lineRadial()
-                        .radius(d => this.scales.y(d.value))
+                        .radius(d => this.scales.y(af(d)))
                         .angle(d => this.scales.x(new Date(d.date).setFullYear(2000)))
                     )
 
             });
 
+
+            // AVERAGE
+            const df = d3.timeFormat("%m-%d")
+            const dfy = d3.timeFormat("%Y-%m-%d")
+            const dfn = d3.timeFormat("%a, %d. %b, %Y")
+            const avgData = {}
+            const date2value = {}
+            const date2avg = {}
+            this.data.forEach((d) => {
+                // console.log(d.date)
+                // console.log(df(d.date))
+                const v = af(d)
+                if (def(v)) {
+                    const f = df(d.date)
+                    date2value[dfy(d.date)] = v;
+                    if (!(f in avgData))
+                        avgData[f] = {s: 0, c: 0}
+
+                    avgData[f].s += v
+                    avgData[f].c += 1
+                }
+            });
+            const avgValue = Object.keys(avgData).map(k => {
+                const d = avgData[k];
+                const v =  d.s/d.c
+                date2avg[k] = v;
+                return {
+                    value: v,
+                    date: new Date(`2000-${k}`)
+                }
+            }).sort((a, b) => a.date - b.date);
+            // console.log(avgValue)
             this.g.select('.path-avg').selectAll("path").remove();
             this.g.select('.path-avg')
                 .append("path")
@@ -258,13 +282,62 @@ export default {
                 )
 
             this.ready = true;
+            this.plotPath()
+
+            // const l = this.g.select('line.test')
+            //     .attr("x1", 0)
+            //     .attr("y1", 0)
+            const gHover = this.g.select('g.hover');
+            const circleAvg = gHover.select('circle.avg')
+            const circleYear = gHover.select('circle.year')
+            const textDate = gHover.select('text.date')
+            const textValue = gHover.select('text.value')
+            const textDiff = gHover.select('text.diff')
+
+            // console.log(date2value)
+            this.g.select('circle.capCircle').on('mousemove', function(e) {
+                const p = d3.pointer(e)
+
+                let aMouse = Math.atan2(p[1], p[0]) + Math.PI/2
+                if (aMouse < 0)
+                    aMouse += 2*Math.PI
+                console.log(aMouse )
+                const date = x.invert(aMouse);
+                const dateBase = df(date);
+                const k = `${self.year}-${dateBase}`;
+                const kBase = `2000-${dateBase}`;
+                const a = x(new Date(kBase));
+                const [cos, sin] = [Math.cos(a - Math.PI/2), Math.sin(a - Math.PI/2)]
+                const vYear = date2value[k];
+                const vYearY = y(vYear)
+                circleYear.attr("cx", cos*vYearY)
+                    .attr("cy", sin*vYearY)
+
+                const vAvg = date2avg[dateBase];
+                const vAvgY = y(vAvg)
+                circleAvg.attr("cx", cos*vAvgY)
+                    .attr("cy", sin*vAvgY)
+
+                textDate.text(dfn(new Date(k)))
+                textValue.text(`${vYear.toFixed(1)} ${self.unit} (Avg: ${vAvg.toFixed(1)} ${self.unit})`)
+
+                const diff = vYear - vAvg
+                textDiff.text(`${d3.format("+.1f")(diff)} ${self.unit}`)
+                    .classed('pos', diff > 0)
+                    .classed('neg', diff < 0)
+
+
+
+            }).on('mouseenter', function(e) {
+                gHover.attr('visibility', 'visible')
+            }).on('mouseleave', function(e) {
+                gHover.attr('visibility', 'hidden')
+            })
+
         },
         plotPath() {
-
-
             this.g.select('.path-years path.active').classed('active', false)
             this.g.select(`.path-years path[data-year="${this.year}"]`).classed('active', true).raise()
-
         }
     },
 }
