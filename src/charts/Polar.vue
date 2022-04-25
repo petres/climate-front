@@ -23,6 +23,7 @@
                     <text class='date' text-anchor='middle' dominant-baseline="middle" transform='translate(0, -20)'/>
                     <text class='value' text-anchor='middle' dominant-baseline="middle" transform='translate(0, 0)'/>
                     <text class='diff' text-anchor='middle' dominant-baseline="middle" transform='translate(0, 20)'/>
+                    <line class='diff'/>
                     <circle class='year' r="4"/>
                     <circle class='avg' r="4"/>
                 </g>
@@ -40,7 +41,7 @@ import { baseStore } from '@/stores/base.js'
 
 export default {
     props: {
-        id: Number,
+        id: String,
         ind: String,
     },
     setup() {
@@ -72,7 +73,7 @@ export default {
         year: 2021,
         width: 0,
         height: 0,
-        innerRadius: 50,
+        innerRadius: 80,
         radius: 200,
         g: null,
         scales: {},
@@ -124,9 +125,11 @@ export default {
         // )
     },
     methods: {
-        plotBase(d) {
+        plotBase() {
             const self = this;
-            console.log(`plotbase ${this.time}`)
+            const def = v => typeof v == 'number' && !isNaN(v);
+
+            // console.log(`plotbase ${this.time}`)
             const data = this.data;
 
             const af = d => d[this.time];
@@ -147,7 +150,7 @@ export default {
             if (!['rr', 'ss'].includes(this.ind))
                 minValue -= (maxValue - minValue)*ext
 
-            console.log([minValue, maxValue])
+            // console.log([minValue, maxValue])
 
             const y = this.scales.y = d3.scaleLinear()
                 .domain([minValue, maxValue])
@@ -198,24 +201,18 @@ export default {
                 .call(g => g.selectAll("g")
                     .data(y.ticks(6))
                     .join("g")
-                    .attr("fill", "none")
                     .call(g => g.append("circle")
-                        .attr("stroke", "#000")
-                        .attr("stroke-opacity", 0.2)
                         .attr("r", y)
                     )
                     .call(g => g.append("text")
                         .attr("y", d => -y(d))
                         .attr("dy", "0.35em")
-                        .attr("stroke", "#fff")
-                        .attr("stroke-width", 5)
                         .text((x, i) => `${x} ${this.unit}`)
                         .clone(true)
                         .attr("y", d => y(d))
                         .selectAll(function() { return [this, this.previousSibling]; })
                         .clone(true)
-                        .attr("fill", "currentColor")
-                        .attr("stroke", "none")
+                        .attr("class", "text")
                     )
                 )
 
@@ -225,7 +222,6 @@ export default {
 
             this.g.select('.path-years').selectAll("path").remove();
 
-            const def = v => typeof v == 'number' && !isNaN(v)
 
             Object.keys(this.yearData).forEach(k => {
                 this.g.select('.path-years')
@@ -233,6 +229,7 @@ export default {
                     .datum(this.yearData[k])
                     .attr("data-year", k)
                     .attr("d", d3.lineRadial()
+                        .defined(d => def(af(d)))
                         .radius(d => this.scales.y(af(d)))
                         .angle(d => this.scales.x(new Date(d.date).setFullYear(2000)))
                     )
@@ -277,6 +274,7 @@ export default {
                 .datum(avgValue)
                 .attr("data-year", 'avg')
                 .attr("d", d3.lineRadial()
+                    .defined(d => def(d.value))
                     .radius(d => this.scales.y(d.value))
                     .angle(d => this.scales.x(new Date(d.date).setFullYear(2000)))
                 )
@@ -293,6 +291,7 @@ export default {
             const textDate = gHover.select('text.date')
             const textValue = gHover.select('text.value')
             const textDiff = gHover.select('text.diff')
+            const lineDiff = gHover.select('line.diff')
 
             // console.log(date2value)
             this.g.select('circle.capCircle').on('mousemove', function(e) {
@@ -301,7 +300,7 @@ export default {
                 let aMouse = Math.atan2(p[1], p[0]) + Math.PI/2
                 if (aMouse < 0)
                     aMouse += 2*Math.PI
-                console.log(aMouse )
+                // console.log(aMouse )
                 const date = x.invert(aMouse);
                 const dateBase = df(date);
                 const k = `${self.year}-${dateBase}`;
@@ -318,6 +317,11 @@ export default {
                 circleAvg.attr("cx", cos*vAvgY)
                     .attr("cy", sin*vAvgY)
 
+                lineDiff.attr("x1", cos*vYearY)
+                    .attr("y1", sin*vYearY)
+                    .attr("x2", cos*vAvgY)
+                    .attr("y2", sin*vAvgY)
+
                 textDate.text(dfn(new Date(k)))
                 textValue.text(`${vYear.toFixed(1)} ${self.unit} (Avg: ${vAvg.toFixed(1)} ${self.unit})`)
 
@@ -325,8 +329,6 @@ export default {
                 textDiff.text(`${d3.format("+.1f")(diff)} ${self.unit}`)
                     .classed('pos', diff > 0)
                     .classed('neg', diff < 0)
-
-
 
             }).on('mouseenter', function(e) {
                 gHover.attr('visibility', 'visible')

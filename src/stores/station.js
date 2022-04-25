@@ -3,16 +3,6 @@ import axios from 'axios';
 import * as d3 from "d3";
 
 const sources = {
-    monthly: {
-        src: 'm.csv',
-        trans: d => d.map(d => ({
-            date: new Date(d.date),
-            value: +d.value/10,
-            avg1: +d.avg1/10,
-            avg5: +d.avg5/10,
-            avg10: +d.avg10/10,
-        }))
-    },
     daily: {
         src: 'd.csv',
         trans: d => d.map(d => ({
@@ -23,11 +13,28 @@ const sources = {
             v31: +d.avg31/10,
         }))
     },
+    monthly: {
+        src: 'm.csv',
+        trans: d => d.map(d => ({
+            date: new Date(`${d.date}-01`),
+            v1: +d.value/10,
+            v13: +d.avg13/10,
+            v61: +d.avg61/10,
+            v121: +d.avg121/10,
+        }))
+    },
+    yearly: {
+        src: 'y.csv',
+        trans: d => d.map(d => ({
+            date: new Date(`${d.date}-01-01`),
+            v1: +d.value/10,
+        }))
+    },
 };
 
 
 export const stationStore = defineStore('station', {
-    state: () => ({ monthly: {}, daily: {} }),
+    state: () => ({ yearly: {}, monthly: {}, daily: {} }),
     getters: {
         loaded: (s) => (p) => p.id in s[p.period] && p.ind in s[p.period][p.id],
         data: (s) => (p) => s[p.period][p.id][p.ind]

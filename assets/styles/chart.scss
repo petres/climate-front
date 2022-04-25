@@ -9,11 +9,48 @@ svg {
     g.y-axis {
         font-size: 10px;
         text-anchor: middle;
+
+        circle {
+            stroke: #000;
+            stroke-opacity: 0.2;
+            fill: none;
+        }
+
+        text {
+            stroke: #ffffff88;
+            stroke-width: 4;
+        }
+
+        text.text {
+            stroke: none
+        }
     }
 }
 
 $colorYear: map.get($colors, "cr");
 $colorAvg: map.get($colors, "b4");
+
+.line-year-chart {
+    path.line {
+        fill: none;
+        stroke-width: 2;
+        stroke: black;
+    }
+    .domain {
+        visibility: hidden;
+    }
+
+    .tick line {
+        opacity: 0.15;
+        stroke-width: 1;
+    }
+    .hover {
+        line {
+            stroke: blue;
+            opacity: 0.5;
+        }
+    }
+}
 
 .polar-chart-container {
     svg {
@@ -24,18 +61,23 @@ $colorAvg: map.get($colors, "b4");
             stroke-width: 1;
         }
 
-        g.hover text {
-            font-size: 12px;
-            &.date {
-                font-weight: bold;
+        g.hover {
+            line.diff {
+                stroke: red;
             }
-            &.diff {
-                font-weight: bold;
-                &.pos {
-                    fill: red;
+            text {
+                font-size: 12px;
+                &.date {
+                    font-weight: bold;
                 }
-                &.neg {
-                    fill: blue;
+                &.diff {
+                    font-weight: bold;
+                    &.pos {
+                        fill: red;
+                    }
+                    &.neg {
+                        fill: blue;
+                    }
                 }
             }
         }
