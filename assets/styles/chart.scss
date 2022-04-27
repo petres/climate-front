@@ -27,7 +27,8 @@ svg {
     }
 }
 
-$colorYear: map.get($colors, "cr");
+// $colorYear: map.get($colors, "cr");
+$colorYear: #3470d1;
 $colorAvg: map.get($colors, "b4");
 
 .line-year-chart {
@@ -44,10 +45,34 @@ $colorAvg: map.get($colors, "b4");
         opacity: 0.15;
         stroke-width: 1;
     }
+
+    .hover, .selected {
+        text {
+            font-size: 12px;
+            text-anchor: middle;
+        }
+        line {
+            stroke: $colorYear;
+            stroke-width: 2px;
+        }
+    }
+
     .hover {
         line {
-            stroke: blue;
-            opacity: 0.5;
+            opacity: 0.6;
+        }
+        text {
+
+        }
+    }
+
+    .selected {
+        line {
+            stroke: $colorYear;
+            opacity: 1;
+        }
+        text {
+            font-size: 12px;
         }
     }
 }
@@ -85,10 +110,15 @@ $colorAvg: map.get($colors, "b4");
         g.path-years path {
             stroke:  map.get($colors, "b8");
             opacity: 0.1;
-            &.active {
+            &.selected {
+                stroke: $colorYear;
+                stroke-width: 2.5;
+                opacity: 1;
+            }
+            &.hover {
                 stroke: $colorYear;
                 stroke-width: 2;
-                opacity: 1;
+                opacity: 0.6;
             }
         }
 

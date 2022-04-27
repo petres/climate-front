@@ -1,21 +1,12 @@
 <template>
     <div ref="container" class='polar-chart-container'>
-        <div class='slider'>
-            <select v-model='time'>
-                 <option value="v31">Monthly</option>
-                 <option value="v15">2 Weekks</option>
-                 <option value="v7">Week</option>
-                 <option value="v1">Daily</option>
-            </select>
+        <!-- <div class='slider'>
             <input type="range" :min="minYear" :max="maxYear" v-model='year'>
-            <span>{{ year }}</span>
-        </div>
+            <span>{{ years }}</span>
+        </div> -->
         <svg class='polar-chart' :height='height' :width='width' :style="{opacity: stationStore.loaded(p) ? 1 : 0.3}">
             <g :transform='`translate(${width/2}, ${height/2})`'>
-                <g class='path-years'>
-                    <!-- <path v-for="(v, k) in yearData" :d='d3.lineRadial().radius(d => scales.y(d.value)).angle(d => scales.x(new Date(d.date).setFullYear(2000)))(v)' />
-                    <path v-if="yearData[year]" class="active" :d='d3.lineRadial().radius(d => scales.y(d.value)).angle(d => scales.x(new Date(d.date).setFullYear(2000)))(yearData[year])' /> -->
-                </g>
+                <g class='path-years'></g>
                 <g class='path-avg'></g>
                 <g class='x-axis'></g>
                 <g class='y-axis'></g>
@@ -43,6 +34,8 @@ export default {
     props: {
         id: String,
         ind: String,
+        time: String,
+        years: Object,
     },
     setup() {
         return {
@@ -67,18 +60,16 @@ export default {
     },
     data: () => ({
         d3: d3,
-        time: 'v7',
         minYear: null,
         maxYear: 2022,
-        year: 2021,
+        // year: 2021,
         width: 0,
         height: 0,
-        innerRadius: 80,
+        innerRadius: 60,
         radius: 200,
         g: null,
         scales: {},
         data: [],
-        ready: false
     }),
     mounted() {
         const cw = this.$refs.container.clientWidth;
@@ -110,11 +101,11 @@ export default {
         )
 
         this.$watch(
-            () => [this.year],
+            () => this.years,
             (n, o) => {
-                this.plotPath();
+                this.plotHighlightYear(n);
             },
-            { immediate : true}
+            { immediate : false, deep: true}
         )
 
         // this.$watch(
@@ -125,43 +116,10 @@ export default {
         // )
     },
     methods: {
-        plotBase() {
-            const self = this;
-            const def = v => typeof v == 'number' && !isNaN(v);
 
-            // console.log(`plotbase ${this.time}`)
-            const data = this.data;
-
-            const af = d => d[this.time];
-
-            [this.minYear, this.maxYear] = d3.extent(data.map(d => d.date.getFullYear()));
-            // this.year = this.maxYear;
-
-            // console.log([this.minYear, this.maxYear])
-
-            const x = this.scales.x = d3.scaleTime()
-                .domain([new Date(2000, 0, 1), new Date(2000, 11, 31) - 1])
-                .range([0, 2 * Math.PI])
-
-            const ext = 1/50;
-            let [minValue, maxValue] = d3.extent(data, d => af(d))
-
-            maxValue += (maxValue - minValue)*ext
-            if (!['rr', 'ss'].includes(this.ind))
-                minValue -= (maxValue - minValue)*ext
-
-            // console.log([minValue, maxValue])
-
-            const y = this.scales.y = d3.scaleLinear()
-                .domain([minValue, maxValue])
-                .range([this.innerRadius, this.radius]);
-
-
+        plotMonthAxis(x) {
             const radiusText = 1.02*this.radius;
-
             const ticks = [...Array(12).keys()].map(i => new Date(2000, i, 1))
-
-
             const xAxis = g => g
                 .call(g => g.selectAll("g")
                     .data(ticks)
@@ -196,7 +154,9 @@ export default {
             this.g.select('.x-axis').selectAll("*").remove();
             this.g.select('.x-axis')
                 .call(xAxis);
+        },
 
+        plotValueAxis(y) {
             const yAxis = g => g
                 .call(g => g.selectAll("g")
                     .data(y.ticks(6))
@@ -219,25 +179,55 @@ export default {
             this.g.select('.y-axis').selectAll("*").remove();
             this.g.select('.y-axis')
                 .call(yAxis);
+        },
 
+        def: v => typeof v == 'number' && !isNaN(v),
+
+        plotBase() {
+            const self = this;
+            const af = d => d[this.time];
+
+            [this.minYear, this.maxYear] = d3.extent(this.data.map(d => d.date.getFullYear()));
+
+            const x = this.scales.x = d3.scaleTime()
+                .domain([new Date(2000, 0, 1), new Date(2000, 11, 31) - 1])
+                .range([0, 2 * Math.PI])
+
+            const ext = 1/50;
+            let [minValue, maxValue] = d3.extent(this.data, d => af(d))
+
+            maxValue += (maxValue - minValue)*ext
+            if (!['rr', 'ss'].includes(this.ind))
+                minValue -= (maxValue - minValue)*ext
+
+            // console.log([minValue, maxValue])
+
+            const y = this.scales.y = d3.scaleLinear()
+                .domain([minValue, maxValue])
+                .range([this.innerRadius, this.radius]);
+
+            this.plotMonthAxis(x);
+            this.plotValueAxis(y);
+
+
+            // PLOT YEAR PATHS
             this.g.select('.path-years').selectAll("path").remove();
-
-
             Object.keys(this.yearData).forEach(k => {
                 this.g.select('.path-years')
                     .append("path")
                     .datum(this.yearData[k])
                     .attr("data-year", k)
                     .attr("d", d3.lineRadial()
-                        .defined(d => def(af(d)))
+                        .defined(d => this.def(af(d)))
                         .radius(d => this.scales.y(af(d)))
                         .angle(d => this.scales.x(new Date(d.date).setFullYear(2000)))
                     )
-
             });
+            this.plotHighlightYear(this.years)
 
 
-            // AVERAGE
+
+            // AVERAGE AND DATA PREP
             const df = d3.timeFormat("%m-%d")
             const dfy = d3.timeFormat("%Y-%m-%d")
             const dfn = d3.timeFormat("%a, %d. %b, %Y")
@@ -248,7 +238,7 @@ export default {
                 // console.log(d.date)
                 // console.log(df(d.date))
                 const v = af(d)
-                if (def(v)) {
+                if (this.def(v)) {
                     const f = df(d.date)
                     date2value[dfy(d.date)] = v;
                     if (!(f in avgData))
@@ -274,17 +264,13 @@ export default {
                 .datum(avgValue)
                 .attr("data-year", 'avg')
                 .attr("d", d3.lineRadial()
-                    .defined(d => def(d.value))
+                    .defined(d => this.def(d.value))
                     .radius(d => this.scales.y(d.value))
                     .angle(d => this.scales.x(new Date(d.date).setFullYear(2000)))
                 )
 
-            this.ready = true;
-            this.plotPath()
 
-            // const l = this.g.select('line.test')
-            //     .attr("x1", 0)
-            //     .attr("y1", 0)
+            // MOUSE OVER
             const gHover = this.g.select('g.hover');
             const circleAvg = gHover.select('circle.avg')
             const circleYear = gHover.select('circle.year')
@@ -303,7 +289,7 @@ export default {
                 // console.log(aMouse )
                 const date = x.invert(aMouse);
                 const dateBase = df(date);
-                const k = `${self.year}-${dateBase}`;
+                const k = `${self.years.s}-${dateBase}`;
                 const kBase = `2000-${dateBase}`;
                 const a = x(new Date(kBase));
                 const [cos, sin] = [Math.cos(a - Math.PI/2), Math.sin(a - Math.PI/2)]
@@ -337,9 +323,16 @@ export default {
             })
 
         },
-        plotPath() {
-            this.g.select('.path-years path.active').classed('active', false)
-            this.g.select(`.path-years path[data-year="${this.year}"]`).classed('active', true).raise()
+        plotHighlightYear(years) {
+            // console.log(years)
+
+            this.g.select('.path-years path.selected').classed('selected', false)
+            if (years.s !== null)
+                this.g.select(`.path-years path[data-year="${years.s}"]`).classed('selected', true).raise()
+
+            this.g.select('.path-years path.hover').classed('hover', false)
+            if (years.h !== null && years.s != years.h)
+                this.g.select(`.path-years path[data-year="${years.h}"]`).classed('hover', true).raise()
         }
     },
 }

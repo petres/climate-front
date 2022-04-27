@@ -7,6 +7,10 @@
                     <line/>
                     <text/>
                 </g>
+                <g class='selected'>
+                    <line/>
+                    <text/>
+                </g>
                 <rect class='cap' opacity="0" :height="innerHeight" :width="innerWidth"/>
             </g>
         </svg>
@@ -28,7 +32,7 @@ export default {
     },
     data: () => ({
         m: {
-            t: 15, r: 15, b: 5, l: 50
+            t: 15, r: 15, b: 10, l: 50
         },
         width: 100,
         height: 80
@@ -109,24 +113,47 @@ export default {
                     .y(d => y(af(d)))
                 )
 
-            const hLine = this.svg.select('g.hover line');
-            const hText = this.svg.select('g.hover text');
 
-            this.svg.select('rect.cap').on('mousemove', function(e) {
-                const p = d3.pointer(e)
-                // console.log(x.invert(p[0]))
-                const d = new Date(`${x.invert(p[0]).getFullYear()}-01-01`)
-                // console.log(d)
+            const ls = {
+                h: {
+                    b: this.svg.select('g.hover'),
+                    l: this.svg.select('g.hover line'),
+                    t: this.svg.select('g.hover text')
+                },
+                s: {
+                    b: this.svg.select('g.selected'),
+                    l: this.svg.select('g.selected line'),
+                    t: this.svg.select('g.selected text')
+                }
+            }
 
-                hLine.attr('x1', x(d))
+            const setYear = (y, t) => {
+                const d = new Date(`${y}-01-01`)
+                ls[t].l.attr('x1', x(d))
                     .attr('x2', x(d))
                     .attr('y1', 0)
                     .attr('y2', self.innerHeight)
 
+                ls[t].t.text(y)
+                    .attr('x', x(d))
+                    .attr('y', self.innerHeight + 10)
+
+                self.$emit('yearChange', {y, t})
+            }
+
+            this.svg.select('rect.cap').on('mousemove', function(e) {
+                const p = d3.pointer(e)
+                const y = x.invert(p[0]).getFullYear();
+                setYear(y, 'h')
             }).on('mouseenter', function(e) {
-                // gHover.attr('visibility', 'visible')
+                ls['h'].b.attr('visibility', 'visible')
             }).on('mouseleave', function(e) {
-                // gHover.attr('visibility', 'hidden')
+                ls['h'].b.attr('visibility', 'hidden')
+                self.$emit('yearChange', {y: null, t: 'h'})
+            }).on('click', function(e) {
+                const p = d3.pointer(e)
+                const y = x.invert(p[0]).getFullYear();
+                setYear(y, 's')
             })
         }
     },
