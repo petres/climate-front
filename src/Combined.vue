@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Maap from '@/Map.vue'
+import Maap from '@/Map2.vue'
 import Station from '@/Station.vue'
 
 export default {

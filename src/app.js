@@ -8,6 +8,7 @@ import List from './List.vue'
 import Station from './Station.vue'
 import Indicator from './Indicator.vue'
 import Combined from './Combined.vue'
+import Maap from '@/Map2.vue'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -18,7 +19,8 @@ const router = createRouter({
   routes: [
     { path: '/list', component: List, name: 'overview' },
     { path: '/station/:id', component: Combined, name: 'station', props: true },
-    { path: '/', component: Combined, name: 'map' },
+    { path: '/map', component: Maap, name: 'map' },
+    { path: '/', component: Combined, name: 'combined' },
     { path: '/station/:id/:ind', component: Indicator, name: 'indicator', props: true },
   ],
 })

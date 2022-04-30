@@ -25,6 +25,7 @@ svg {
             stroke: none
         }
     }
+    user-select: none;
 }
 
 // $colorYear: map.get($colors, "cr");
@@ -74,6 +75,10 @@ $colorAvg: map.get($colors, "b4");
         text {
             font-size: 12px;
         }
+    }
+
+    rect.cap {
+        cursor: col-resize;
     }
 }
 

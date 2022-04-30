@@ -3,13 +3,19 @@
         <svg class='line-year-chart' :height='height' :width='width' :style="{opacity: stationStore.loaded(p) ? 1 : 0.3}">
             <g :transform='`translate(${m.l}, ${m.t})`' fill="#333">
                 <g class='inner'/>
-                <g class='hover'>
-                    <line/>
-                    <text/>
+                <g class='hover' visibility='hidden'>
+                    <line y1='0' :y2='innerHeight'/>
+                    <g :transform='`translate(0, ${innerHeight + 10})`'>
+                        <rect :transform='`translate(-50, 0)`' />
+                        <text/>
+                    </g>
                 </g>
                 <g class='selected'>
-                    <line/>
-                    <text/>
+                    <line y1='0' :y2='innerHeight'/>
+                    <g :transform='`translate(0, ${innerHeight + 10})`'>
+                        <rect :transform='`translate(-50, 0)`' />
+                        <text/>
+                    </g>
                 </g>
                 <rect class='cap' opacity="0" :height="innerHeight" :width="innerWidth"/>
             </g>
@@ -117,44 +123,50 @@ export default {
             const ls = {
                 h: {
                     b: this.svg.select('g.hover'),
-                    l: this.svg.select('g.hover line'),
                     t: this.svg.select('g.hover text')
                 },
                 s: {
                     b: this.svg.select('g.selected'),
-                    l: this.svg.select('g.selected line'),
                     t: this.svg.select('g.selected text')
                 }
             }
 
             const setYear = (y, t) => {
-                const d = new Date(`${y}-01-01`)
-                ls[t].l.attr('x1', x(d))
-                    .attr('x2', x(d))
-                    .attr('y1', 0)
-                    .attr('y2', self.innerHeight)
-
-                ls[t].t.text(y)
-                    .attr('x', x(d))
-                    .attr('y', self.innerHeight + 10)
-
+                if (y !== null) {
+                    const d = new Date(`${y}-01-01`)
+                    ls[t].b.attr('transform', `translate(${x(d)}, 0)`)
+                    ls[t].t.text(y)
+                } else {
+                    ls[t].b.attr('visibility', 'hidden')
+                }
                 self.$emit('yearChange', {y, t})
             }
 
-            this.svg.select('rect.cap').on('mousemove', function(e) {
-                const p = d3.pointer(e)
-                const y = x.invert(p[0]).getFullYear();
-                setYear(y, 'h')
-            }).on('mouseenter', function(e) {
-                ls['h'].b.attr('visibility', 'visible')
-            }).on('mouseleave', function(e) {
-                ls['h'].b.attr('visibility', 'hidden')
-                self.$emit('yearChange', {y: null, t: 'h'})
-            }).on('click', function(e) {
-                const p = d3.pointer(e)
-                const y = x.invert(p[0]).getFullYear();
-                setYear(y, 's')
-            })
+            let handle = 'h';
+            const getYearFromE = function(e) {
+                const p = d3.pointer(e);
+                const d = x.invert(p[0]);
+                const y = d.getFullYear();
+                return d.getMonth() < 6 ? y : y+1;
+            }
+            this.svg.select('rect.cap')
+                .on('mousemove', function(e) {
+                    if (handle == 'h')
+                        ls['h'].b.attr('visibility', 'visible')
+                    setYear(getYearFromE(e), handle)
+                }).on('mousedown', function(e) {
+                    setYear(null, 'h')
+                    handle = 's'
+                    setYear(getYearFromE(e), handle)
+                }).on('mouseup', function(e) {
+                    setYear(getYearFromE(e), handle)
+                    handle = 'h';
+                }).on('mouseleave', function(e) {
+                    setYear(null, 'h')
+                })
+
+            setYear(2000, 's')
+            setYear(null, 'h')
         }
     },
 }
