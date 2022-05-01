@@ -25,6 +25,7 @@ export const baseStore = defineStore('base', {
         loaded: (s) => Object.keys(sources).filter(d => !(d in s.data)).length == 0,
         station: (s) => (id) => s.data.stations[id],
         indicator: (s) => (id) => s.data.indicators[id],
+        stations: (s) => () => Object.values(s.data.stations),
     },
     actions: {
         load() {

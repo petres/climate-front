@@ -1,14 +1,18 @@
 <template>
-    <div class="indicator" v-if="id && ind && stationStore.loaded">
+    <div class="indicator" v-if="id && ind && stationStore.loaded" style="position: relative;">
         <indicator-header :ind='ind'/>
         <line-chart :id='id' :ind='ind' @year-change="i => years[i.t] = i.y"/>
-        <select v-model='time' style="positon: absolute">
+        <select v-model='smooth' style="position: absolute">
              <option value="v31">Monthly</option>
              <option value="v15">2 Weeks</option>
              <option value="v7">Week</option>
              <option value="v1">Daily</option>
         </select>
-        <polar-chart :id='id' :ind='ind' :time='time' :years='years' />
+        <select v-model='valueType' style="position: absolute; right: 0px;">
+             <option value="abs">Absolute</option>
+             <option value="rel">Relative</option>
+        </select>
+        <polar-chart :id='id' :ind='ind' :smooth='smooth' :years='years' :valueType='valueType' />
     </div>
 </template>
 
@@ -31,7 +35,8 @@ export default {
         }
     },
     data: () => ({
-        time: 'v31',
+        smooth: 'v31',
+        valueType: 'rel',
         years: {
             s: 2020,
             h: null,

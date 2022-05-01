@@ -84,21 +84,20 @@ export default {
     },
 	computed: {
 		stationSource () {
-			stationSourceTemplate.data.features = Object.keys(this.baseStore.data.stations).filter(id => id < 100).map(id => {
-				const station = this.baseStore.station(id);
-				const entry = {
+			stationSourceTemplate.data.features = this.baseStore.stations()
+				.filter(s => s.indices.includes("tg"))
+				.filter(s => s.id < 100)
+				.map(s => ({
 					'type': 'Feature',
 					'properties': {
-						'id': `${station.id}`,
-						'name': `${station.name}`
+						'id': `${s.id}`,
+						'name': `${s.name}`
 					},
 					'geometry': {
 						'type': 'Point',
-						'coordinates': station.coords
+						'coordinates': s.coords
 					}
-				}
-				return entry;
-			})
+				}));
 			return stationSourceTemplate;
 		}
 	},

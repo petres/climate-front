@@ -3,18 +3,19 @@
         <svg class='line-year-chart' :height='height' :width='width' :style="{opacity: stationStore.loaded(p) ? 1 : 0.3}">
             <g :transform='`translate(${m.l}, ${m.t})`' fill="#333">
                 <g class='inner'/>
-                <g class='hover' visibility='hidden'>
+                <g class='selected'>
                     <line y1='0' :y2='innerHeight'/>
-                    <g :transform='`translate(0, ${innerHeight + 10})`'>
+                    <g :transform='`translate(0, ${innerHeight + 12})`'>
                         <rect :transform='`translate(-50, 0)`' />
                         <text/>
                     </g>
                 </g>
-                <g class='selected'>
+                <g class='hover' visibility='hidden'>
                     <line y1='0' :y2='innerHeight'/>
-                    <g :transform='`translate(0, ${innerHeight + 10})`'>
+                    <g :transform='`translate(0, ${innerHeight + 12})`'>
                         <rect :transform='`translate(-50, 0)`' />
-                        <text/>
+                        <text class="back"/>
+                        <text class="front"/>
                     </g>
                 </g>
                 <rect class='cap' opacity="0" :height="innerHeight" :width="innerWidth"/>
@@ -38,7 +39,7 @@ export default {
     },
     data: () => ({
         m: {
-            t: 15, r: 15, b: 10, l: 50
+            t: 15, r: 15, b: 15, l: 50
         },
         width: 100,
         height: 80
@@ -69,11 +70,11 @@ export default {
         )
     },
     methods: {
+        def: v => typeof v == 'number' && !isNaN(v),
         plot() {
             const self = this;
             const time = 'v1'
             const af = d => d[time]
-            const def = v => typeof v == 'number' && !isNaN(v)
             // const data = this.data.filter(d => def(af(d)));
             const data = this.data;
 
@@ -98,6 +99,10 @@ export default {
                 .call(xAxis);
 
             // Add Y axis
+            const dataDef = data.filter(e => this.def(af(e))).map(e => af(e));
+            const avg = dataDef.reduce( ( p, c ) => p + c, 0 ) / dataDef.length;
+
+
             const y = d3.scaleLinear()
                 .domain(d3.extent(data, d => af(d)))
                 .range([this.innerHeight, 0]);
@@ -114,20 +119,28 @@ export default {
                 .datum(data)
                 .attr("class", 'line')
                 .attr("d", d3.line()
-                    .defined(d => def(af(d)))
+                    .defined(d => this.def(af(d)))
                     .x(d => x(d.date))
                     .y(d => y(af(d)))
                 )
+
+            this.g.append("line")
+                .attr("class", 'avg')
+                .attr("x1", 0)
+                .attr("y1", y(avg))
+                .attr("x2", this.innerWidth)
+                .attr("y2", y(avg))
+
 
 
             const ls = {
                 h: {
                     b: this.svg.select('g.hover'),
-                    t: this.svg.select('g.hover text')
+                    t: this.svg.selectAll('g.hover text')
                 },
                 s: {
                     b: this.svg.select('g.selected'),
-                    t: this.svg.select('g.selected text')
+                    t: this.svg.selectAll('g.selected text')
                 }
             }
 

@@ -29,14 +29,20 @@ svg {
 }
 
 // $colorYear: map.get($colors, "cr");
-$colorYear: #3470d1;
+$colorYear: #007049;
 $colorAvg: map.get($colors, "b4");
 
 .line-year-chart {
     path.line {
         fill: none;
         stroke-width: 2;
-        stroke: black;
+        stroke: $colorYear;
+        opacity: 1;
+    }
+    line.avg {
+        stroke-width: 2;
+        stroke: $colorAvg;
+        opacity: 0.7;
     }
     .domain {
         visibility: hidden;
@@ -49,12 +55,12 @@ $colorAvg: map.get($colors, "b4");
 
     .hover, .selected {
         text {
-            font-size: 12px;
+            font-size: 13px;
             text-anchor: middle;
         }
         line {
             stroke: $colorYear;
-            stroke-width: 2px;
+            stroke-width: 1px;
         }
     }
 
@@ -62,18 +68,19 @@ $colorAvg: map.get($colors, "b4");
         line {
             opacity: 0.6;
         }
-        text {
-
+        text.back {
+            stroke-width: 3px;
+            stroke: white;
         }
     }
 
     .selected {
         line {
-            stroke: $colorYear;
             opacity: 1;
+            stroke-width: 2px;
         }
         text {
-            font-size: 12px;
+            font-weight: bold;
         }
     }
 
@@ -93,22 +100,29 @@ $colorAvg: map.get($colors, "b4");
 
         g.hover {
             line.diff {
-                stroke: red;
+                &.pos { stroke: red; }
+                &.neg { stroke: blue; }
             }
             text {
-                font-size: 12px;
-                &.date {
+                .weekday, .dayMonth {
+                    font-size: 12px;
                     font-weight: bold;
                 }
-                &.diff {
+                .header {
+                    &.year { fill: $colorYear; }
+                    &.avg  { fill: $colorAvg; }
+                    
+                    font-size: 12px;
                     font-weight: bold;
-                    &.pos {
-                        fill: red;
-                    }
-                    &.neg {
-                        fill: blue;
-                    }
+                    fill: #666;
+
+                    &.pos { fill: red; }
+                    &.neg { fill: blue; }
                 }
+                .value {
+                    font-size: 13px;
+                }
+
             }
         }
 
