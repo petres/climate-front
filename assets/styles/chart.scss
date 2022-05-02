@@ -29,7 +29,7 @@ svg {
 }
 
 // $colorYear: map.get($colors, "cr");
-$colorYear: #007049;
+$colorYear: map.get($colors, "cp");
 $colorAvg: map.get($colors, "b4");
 
 .line-year-chart {
@@ -96,6 +96,11 @@ $colorAvg: map.get($colors, "b4");
         path {
             fill: none;
             stroke-width: 1;
+            &.area {
+                opacity: 0.1;
+                &.above { fill: red;  }
+                &.below { fill: blue; }
+            }
         }
 
         g.hover {
@@ -111,7 +116,7 @@ $colorAvg: map.get($colors, "b4");
                 .header {
                     &.year { fill: $colorYear; }
                     &.avg  { fill: $colorAvg; }
-                    
+
                     font-size: 12px;
                     font-weight: bold;
                     fill: #666;
@@ -131,7 +136,7 @@ $colorAvg: map.get($colors, "b4");
             opacity: 0.1;
             &.selected {
                 stroke: $colorYear;
-                stroke-width: 2.5;
+                stroke-width: 2;
                 opacity: 1;
             }
             &.hover {

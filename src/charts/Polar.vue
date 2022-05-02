@@ -4,6 +4,7 @@
             <g :transform='`translate(${width/2}, ${height/2})`'>
                 <g class='path-years'></g>
                 <g class='path-avg'></g>
+                <g class='areas'></g>
                 <g class='x-axis'></g>
                 <g class='y-axis'></g>
                 <g v-if='value' class='hover' >
@@ -47,12 +48,13 @@ export default {
         }
     },
     computed: {
-        weekday () { return d3.timeFormat("%a")(this.date)},
-        dayMonth () { return d3.timeFormat("%d. %b")(this.date)},
-        diff () { return d3.format("+.1f")(this.value - this.valueAvg)},
-        p () { return {id: this.id, ind: this.ind, period: 'daily'} },
-        unit () { return this.baseStore.indicator(this.ind).unit },
-        yearData () {
+        uid() {return `${this.id}-${this.ind}-${this.smooth}-${this.valueType}`},
+        weekday() { return d3.timeFormat("%a")(this.date)},
+        dayMonth() { return d3.timeFormat("%d. %b")(this.date)},
+        diff() { return d3.format("+.1f")(this.value - this.valueAvg)},
+        p() { return {id: this.id, ind: this.ind, period: 'daily'} },
+        unit() { return this.baseStore.indicator(this.ind).unit },
+        yearData() {
             let t = {};
             this.data.forEach(d => {
                 const year = d.date.getFullYear()
@@ -62,7 +64,28 @@ export default {
             });
             // console.log('yearData')
             return t;
+        },
+        line() {
+            return d3.lineRadial()
+                .defined(d => this.def(d.value))
+                .radius(d => this.y(d.value))
+                .angle(d => this.x(new Date(d.date).setFullYear(2000)));
+        },
+        areaAbove() {
+            return d3.areaRadial()
+                .defined(this.line.defined())
+                .angle(this.line.angle())
+                .innerRadius(this.line.radius())
+                .outerRadius(this.radius);
+        },
+        areaBelow() {
+            return d3.areaRadial()
+                .defined(this.line.defined())
+                .angle(this.line.angle())
+                .outerRadius(this.line.radius())
+                .innerRadius(0);
         }
+
     },
     data: () => ({
         d3: d3,
@@ -71,10 +94,13 @@ export default {
         innerRadius: 65,
         radius: 200,
         g: null,
+        svg: null,
         data: [],
         date: null,
         value: null,
-        avgValue: null
+        avgValue: null,
+        x: null,
+        y: null,
     }),
     mounted() {
         const cw = this.$refs.container.clientWidth;
@@ -84,11 +110,11 @@ export default {
         this.height = this.radius*2 * 1.1;
 
         // console.log(this.data.map(d => d.date.getFullYear()))
-        const svg = d3.select(this.$refs.container).select("svg.polar-chart")
+        this.svg = d3.select(this.$refs.container).select("svg.polar-chart")
             .attr("width", this.width)
             .attr("height", this.width)
 
-        this.g = svg.select("g")
+        this.g = this.svg.select("g")
 
         // this.plotBase();
 
@@ -267,11 +293,11 @@ export default {
 
 
             // - SCALES -
-            const x = d3.scaleTime()
+            const x = this.x = d3.scaleTime()
                 .domain([new Date(2000, 0, 1), new Date(2000, 11, 31) - 1])
                 .range([0, 2 * Math.PI])
 
-            const y = d3.scaleLinear()
+            const y = this.y = d3.scaleLinear()
                 .domain(extent)
                 .range([this.innerRadius, this.radius]);
 
@@ -298,16 +324,30 @@ export default {
 
 
             // - AVERAGE PATH -
+
             this.g.select('.path-avg').selectAll("path").remove();
             this.g.select('.path-avg')
                 .append("path")
                 .datum(avgValues)
                 .attr("data-year", 'avg')
-                .attr("d", d3.lineRadial()
-                    .defined(d => this.def(d.value))
-                    .radius(d => y(d.value))
-                    .angle(d => x(new Date(d.date).setFullYear(2000)))
-                )
+                .attr("d", this.line)
+
+
+            //  AREA
+            this.g.select('defs').remove();
+
+            const defs = this.svg.append('defs');
+            defs.append('clipPath')
+                .attr('id', `clip-below-${this.uid}`)
+                .append('path')
+                .datum(avgValues)
+                .attr('d', this.areaBelow);
+
+            defs.append('clipPath')
+                .attr('id', `clip-above-${this.uid}`)
+                .append('path')
+                .datum(avgValues)
+                .attr('d', this.areaAbove);
 
 
             // - MOUSE EVENTS -
@@ -360,12 +400,31 @@ export default {
                 self.g.select('g.hover').attr('visibility', 'hidden')
             })
 
+
+
         },
         highlightYear(years) {
-            // console.log(years)
             this.g.select('.path-years path.selected').classed('selected', false)
-            if (years.s !== null)
+            if (years.s !== null) {
                 this.g.select(`.path-years path[data-year="${years.s}"]`).classed('selected', true).raise()
+
+                // console.log(this.yearData[this.years.s])
+                if (this.yearData[this.years.s]) {
+                    this.g.select('.areas').selectAll("path").remove();
+                    this.g.select('.areas').append("path")
+                        .attr("class", "area below")
+                        .datum(this.yearData[this.years.s])
+                        .attr("d", this.areaAbove)
+                        .attr('clip-path', `url(#clip-below-${this.uid})`)
+
+                    this.g.select('.areas').append("path")
+                        .attr("class", "area above")
+                        .datum(this.yearData[this.years.s])
+                        .attr("d", this.areaBelow)
+                        .attr('clip-path', `url(#clip-above-${this.uid})`)
+                }
+
+            }
 
             this.g.select('.path-years path.hover').classed('hover', false)
             if (years.h !== null && years.s != years.h)

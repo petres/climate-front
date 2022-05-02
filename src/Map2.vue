@@ -44,7 +44,7 @@ const circleLayer = {
 	'paint': {
 		'circle-radius': 5,
 		'circle-blur': 0,
-		'circle-color': '#B42222',
+		'circle-color': '#008729',
 		'circle-opacity': 0.75,
 	},
 	// 'filter': ['==', '$type', 'Point']
