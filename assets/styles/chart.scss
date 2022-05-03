@@ -141,7 +141,7 @@ svg.line-year-chart {
         }
 
         g.path-years path {
-            stroke:  map.get($colors, "b8");
+            stroke:  #999;
             opacity: 0.1;
             &.selected {
                 stroke: $colorYear;

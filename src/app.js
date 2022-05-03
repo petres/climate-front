@@ -8,7 +8,7 @@ import List from './List.vue'
 import Station from './Station.vue'
 import Indicator from './Indicator.vue'
 import Combined from './Combined.vue'
-import Maap from '@/Map2.vue'
+import Maap from '@/Map.vue'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

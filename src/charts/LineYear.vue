@@ -178,7 +178,7 @@ export default {
                     setYear(null, 'h')
                 })
 
-            setYear(2000, 's')
+            setYear(d3.max(data, d => d.date).getFullYear(), 's')
             setYear(null, 'h')
         }
     },
