@@ -1,8 +1,7 @@
 # [climate.abteil.org](https://climate.abteil.org)
 climate data vis website
 
-![image](https://user-images.githubusercontent.com/3594062/166329751-11fb554a-6753-4e5a-bb2a-175cceb0f068.png)
-
+![image](https://user-images.githubusercontent.com/3594062/166471676-1e903231-cf3f-473c-9289-ebc77cc30048.png)
 
 ## aim
 Providing bare weather data visualisation to get an basic idea of the ocurring climate change.
