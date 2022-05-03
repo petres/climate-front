@@ -9,14 +9,14 @@
                 <g class='y-axis'></g>
                 <g v-if='value' class='hover' >
                     <text text-anchor='middle' dominant-baseline="middle">
-                        <tspan class="weekday" x='0' y="-45px">{{ weekday }},</tspan>
-                        <tspan class="dayMonth" x='0' y="-32px">{{ dayMonth }}</tspan>
+                        <tspan class="weekday" x='0' y="-49px">{{ weekday }},</tspan>
+                        <tspan class="dayMonth" x='0' y="-34px">{{ dayMonth }}</tspan>
                         <tspan class="year header" x='-32' y="-10px">{{ years.s }}</tspan>
-                        <tspan class="year value" x='-32' y="5px">{{ value.toFixed(1) }}{{ unit }}</tspan>
+                        <tspan class="year value" x='-32' y="5px">{{ value.toFixed(1) }} {{ unit }}</tspan>
                         <tspan class="avg header" x='32' y="-10px">Avg.</tspan>
-                        <tspan class="avg value" x='32' y="5px">{{ valueAvg.toFixed(1) }}{{ unit }}</tspan>
+                        <tspan class="avg value" x='32' y="5px">{{ valueAvg.toFixed(1) }} {{ unit }}</tspan>
                         <tspan class="diff header" :class="{ pos: (value - valueAvg) > 0, neg: (value - valueAvg) < 0 }" x='0' y="28px">Diff.</tspan>
-                        <tspan class="diff value" x='0' y="43px">{{ diff }}{{ unit }}</tspan>
+                        <tspan class="diff value" x='0' y="43px">{{ diff }} {{ unit }}</tspan>
                     </text>
                     <line :class="{ pos: (value - valueAvg) > 0, neg: (value - valueAvg) < 0 }" class='diff'/>
                     <circle class='year' r="4"/>

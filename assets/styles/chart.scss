@@ -1,5 +1,11 @@
 @use "sass:map";
 
+$colorYear: map.get($colors, "base");
+$colorAvg: map.get($colors, "avg");
+
+$colorPos: map.get($colors, "pos");
+$colorNeg: map.get($colors, "neg");
+
 svg {
     g.x-axis {
         font-size: 12px;
@@ -28,21 +34,19 @@ svg {
     user-select: none;
 }
 
-// $colorYear: map.get($colors, "cr");
-$colorYear: map.get($colors, "cp");
-$colorAvg: map.get($colors, "b4");
 
-.line-year-chart {
+
+svg.line-year-chart {
     path.line {
         fill: none;
-        stroke-width: 2;
+        stroke-width: 1.5;
         stroke: $colorYear;
         opacity: 1;
     }
     line.avg {
-        stroke-width: 2;
+        stroke-width: 1.5;
         stroke: $colorAvg;
-        opacity: 0.7;
+        // opacity: 0.6;
     }
     .domain {
         visibility: hidden;
@@ -97,35 +101,40 @@ $colorAvg: map.get($colors, "b4");
             fill: none;
             stroke-width: 1;
             &.area {
-                opacity: 0.1;
-                &.above { fill: red;  }
-                &.below { fill: blue; }
+                opacity: 0.2;
+                &.above { fill: $colorPos;  }
+                &.below { fill: $colorNeg; }
             }
         }
 
         g.hover {
             line.diff {
-                &.pos { stroke: red; }
-                &.neg { stroke: blue; }
+                &.pos { stroke: $colorPos; }
+                &.neg { stroke: $colorNeg; }
             }
             text {
                 .weekday, .dayMonth {
                     font-size: 12px;
+                }
+                .dayMonth {
                     font-weight: bold;
+                    font-size: 14px;
                 }
                 .header {
                     &.year { fill: $colorYear; }
                     &.avg  { fill: $colorAvg; }
 
                     font-size: 12px;
+                    letter-spacing: 1px;
                     font-weight: bold;
                     fill: #666;
 
-                    &.pos { fill: red; }
-                    &.neg { fill: blue; }
+                    &.pos { fill: $colorPos; }
+                    &.neg { fill: $colorNeg; }
                 }
                 .value {
-                    font-size: 13px;
+                    text-decoration-line: overline;
+                    font-size: 12px;
                 }
 
             }
@@ -136,12 +145,12 @@ $colorAvg: map.get($colors, "b4");
             opacity: 0.1;
             &.selected {
                 stroke: $colorYear;
-                stroke-width: 2;
+                stroke-width: 1.5;
                 opacity: 1;
             }
             &.hover {
                 stroke: $colorYear;
-                stroke-width: 2;
+                stroke-width: 1.5;
                 opacity: 0.6;
             }
         }
@@ -160,28 +169,6 @@ $colorAvg: map.get($colors, "b4");
             stroke: $colorAvg;
             stroke-width: 2;
             opacity: 0.8;
-        }
-    }
-    .slider {
-        margin-top: 8px;
-        position: relative;
-        input {
-            width: calc(100% - 160px);
-            left: 80px;
-            position: relative;
-        }
-        span {
-            position: absolute;
-            right: 0;
-            top: 2px;
-            width: 80px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 0.8em;
-        }
-        select {
-            position: absolute;
-            width: 70px;
         }
     }
 }
