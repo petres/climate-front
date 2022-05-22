@@ -115,6 +115,13 @@ export default {
             this.g.append("g")
                 .call(yAxis);
 
+            this.g.append("line")
+                .attr("class", 'avg')
+                .attr("x1", 0)
+                .attr("y1", y(avg))
+                .attr("x2", this.innerWidth)
+                .attr("y2", y(avg))
+
             this.g.append("path")
                 .datum(data)
                 .attr("class", 'line')
@@ -123,15 +130,6 @@ export default {
                     .x(d => x(d.date))
                     .y(d => y(af(d)))
                 )
-
-            this.g.append("line")
-                .attr("class", 'avg')
-                .attr("x1", 0)
-                .attr("y1", y(avg))
-                .attr("x2", this.innerWidth)
-                .attr("y2", y(avg))
-
-
 
             const ls = {
                 h: {

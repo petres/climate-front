@@ -8,6 +8,7 @@
 import { baseStore } from '@/stores/base.js'
 import { Map, Marker, Popup } from 'maplibre-gl';
 import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
+import * as d3 from "d3";
 
 const state = { lng: 14.5501, lat: 47.5162, zoom: 4 };
 const style = {
@@ -42,8 +43,9 @@ const circleLayer = {
 	'type': 'circle',
 	'source': 'stations',
 	'paint': {
-		'circle-radius': 7,
+		'circle-radius': 4,
 		'circle-blur': 0,
+		'circle-color': ['get', 'color'],
 		// 'circle-color': '#008729',
 		'circle-opacity': 0.6,
 	},
@@ -84,20 +86,29 @@ export default {
     },
 	computed: {
 		stationSource () {
+			const color = d3.scaleLinear()
+    			.domain([0, 1])
+				.range(['blue', 'red'])
+
 			stationSourceTemplate.data.features = this.baseStore.stations()
-				.filter(s => s.indices.includes("tg"))
-				.filter(s => s.id < 100)
-				.map(s => ({
-					'type': 'Feature',
-					'properties': {
-						'id': `${s.id}`,
-						'name': `${s.name}`
-					},
-					'geometry': {
-						'type': 'Point',
-						'coordinates': s.coords
+				// .filter(s => s.indices.includes("tg"))
+				// .filter(s => s.id < 100)
+				.map(s => {
+					const value = Math.random()
+					return {
+						'type': 'Feature',
+						'properties': {
+							'id': `${s.id}`,
+							'name': `${s.name}`,
+							'value': value,
+							'color': color(value),
+						},
+						'geometry': {
+							'type': 'Point',
+							'coordinates': s.coords
+						}
 					}
-				}));
+				});
 			return stationSourceTemplate;
 		}
 	},
