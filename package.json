@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --env publicPath=/ --config build/webpack.config.dev.js",
     "dev": "webpack-dev-server --config build/webpack.config.dev.js",
-    "upload": "rsync -arv --delete dist/ climate.abteil.org:/www/htdocs/w01cd68d/climate.abteil.org/",
+    "download": "rsync -arv --delete pugsley.int.wsr.at:~/shares/xxl/ohne_backup/R-Packages/cache/ECAD/web/* assets/data",
+    "upload": "rsync -arv --delete --exclude 'data' dist/ climate.abteil.org:/www/htdocs/w01cd68d/climate.abteil.org/",
     "deploy": "rm -rf dist && npm run build && npm run upload"
   },
   "author": "Peter Reschenhofer",

@@ -47,7 +47,8 @@ const circleLayer = {
 		'circle-blur': 0,
 		'circle-color': ['get', 'color'],
 		// 'circle-color': '#008729',
-		'circle-opacity': 0.6,
+		//'circle-opacity': 0.6,
+		'circle-opacity': 1,
 	},
 	// 'filter': ['==', '$type', 'Point']
 };
@@ -86,20 +87,24 @@ export default {
     },
 	computed: {
 		stationSource () {
+			const sv = d => d.mean_2010_td - d.mean_1940_1960;
+			const extent = d3.extent(this.baseStore.stations(), sv);
 			const color = d3.scaleLinear()
-    			.domain([0, 1])
-				.range(['blue', 'red'])
+    			.domain([0, extent[1]])
+				.range(['yellow', 'red'])
+
+			const f = d3.format("+.1f")
 
 			stationSourceTemplate.data.features = this.baseStore.stations()
 				// .filter(s => s.indices.includes("tg"))
 				// .filter(s => s.id < 100)
 				.map(s => {
-					const value = Math.random()
+					const value = sv(s)
 					return {
 						'type': 'Feature',
 						'properties': {
 							'id': `${s.id}`,
-							'name': `${s.name}`,
+							'name': `${s.name} | ${f(value/10)} °C`,
 							'value': value,
 							'color': color(value),
 						},
