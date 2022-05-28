@@ -2,10 +2,7 @@
     <div class="station">
         <div class="station-inner">
             <station-header :id='id'/>
-            <!-- <indicator v-if='station.indices.includes("tx")' :id='id' ind='tx'/> -->
-            <indicator v-if='station.indices.includes("tg")' :id='id' ind='tg'/>
-            <indicator v-if='station.indices.includes("rr")' :id='id' ind='rr'/>
-            <indicator v-if='station.indices.includes("ss")' :id='id' ind='ss'/>
+            <indicator v-for='i in station.indices' :id='id' :ind='i'/>
         </div>
     </div>
 </template>
