@@ -11,18 +11,19 @@ const sources = {
             v7: +d.avg7/10,
             v15: +d.avg15/10,
             v31: +d.avg31/10,
+            v365: +d.avg365/10,
         }))
     },
-    monthly: {
-        src: 'm.csv',
-        trans: d => d.map(d => ({
-            date: new Date(`${d.date}-01`),
-            v1: +d.value/10,
-            v13: +d.avg13/10,
-            v61: +d.avg61/10,
-            v121: +d.avg121/10,
-        }))
-    },
+    // monthly: {
+    //     src: 'm.csv',
+    //     trans: d => d.map(d => ({
+    //         date: new Date(`${d.date}-01`),
+    //         v1: +d.value/10,
+    //         v13: +d.avg13/10,
+    //         v61: +d.avg61/10,
+    //         v121: +d.avg121/10,
+    //     }))
+    // },
     yearly: {
         src: 'y.csv',
         trans: d => d.map(d => ({

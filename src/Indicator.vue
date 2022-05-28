@@ -3,6 +3,7 @@
         <indicator-header :ind='ind'/>
         <line-chart :id='id' :ind='ind' @year-change="i => years[i.t] = i.y"/>
         <select v-model='smooth' style="position: absolute">
+             <option value="v365">Yearly</option>
              <option value="v31">Monthly</option>
              <option value="v15">2 Weeks</option>
              <option value="v7">Week</option>
@@ -35,7 +36,7 @@ export default {
         }
     },
     data: () => ({
-        smooth: 'v31',
+        smooth: 'v1',
         valueType: 'rel',
         years: {
             s: 2020,
