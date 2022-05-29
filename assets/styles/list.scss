@@ -1,0 +1,48 @@
+#stationList {
+    li, .header {
+        .country {
+            display: inline-block;
+            width: 30px;
+            text-align: center;
+        }
+
+        .name {
+            display: inline-block;
+            width: 250px;
+        }
+    }
+    .header {
+        padding-bottom: 2px;
+        border-bottom: 1px #888 solid;
+        .sort {
+            cursor: pointer;
+        }
+    }
+}
+
+
+#stationList ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    li {
+        display: block;
+        padding: 10px 0;
+        border-bottom: 1px #CCC solid;
+        cursor: pointer;
+        .country {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .name {
+            // overflow: hidden;
+            white-space: nowrap;
+        }
+        &:hover {
+            background-color: #EEE;
+        }
+
+    }
+}

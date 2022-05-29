@@ -1,7 +1,12 @@
 <template>
     <div class="station-header">
         <h2>{{ station.name }}</h2>
-        <span class='sub'>Id: {{ station.id }}, Height: {{ station.height }}, Coords: {{ station.coords }},<br/> Indices: {{ station.indices }}</span>
+        <span class='sub'>
+            Id: {{ station.id }},
+            Height: {{ station.height }},
+            Coords: {{ station.coords }}<br/>
+            <!-- Indices: {{ station.indices }} -->
+        </span>
     </div>
 </template>
 
