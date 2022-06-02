@@ -6,20 +6,26 @@
             <div id="stationList" ref='stationList'>
                 <!-- <input class="fuzzy-search" placeholder="Search" /> -->
 
-                <div class='header'>
-                    <span class='country sort' data-sort='country'>⇅</span>
-                    <span class='name sort' data-sort='name'>⇅ <input onclick="event.stopPropagation()" type="text" class="search" /></span>
-                    <span class='year_min sort' data-sort='year_min'>⇅</span>
-                </div>
-                <ul class="list"></ul>
-                <div style="display:none;">
-                    <li id='template-item'>
-                        <span class="id" style="display: none;"></span>
-                        <span class="country"></span>
-                        <span class="name"></span>
-                        <span class="year_min"></span> <span class="mean_1940_1960"></span>  <span class="mean_2010_td"></span>
+
+                <ul class="list">
+                    <li class="header">
+                        <span class="country">Ctry</span>
+                        <span class="name">Name</span>
+                        <span class="year_min">First<br/>Year</span>
+                        <span class="mean_1940_1960">Mean<br/>1940-1960</span>
+                        <span class="mean_2010_td">Mean<br/>2010-today</span>
+                        <span class="diff">Diff.</span>
                     </li>
-                </div>
+                    <li v-for='e in stations' @click='$router.push({ name: "station", params: { id: e.id }})'>
+                        <span class="country">{{ e.country }}</span>
+                        <span class="name">{{ e.name }}</span>
+                        <span class="year_min">{{ e.year_min }}</span>
+                        <span class="mean_1940_1960">{{ Math.round(e.mean_1940_1960)/10 }} °C</span>
+                        <span class="mean_2010_td">{{ Math.round(e.mean_2010_td)/10 }} °C</span>
+                        <span class="diff">{{ Math.round(e.mean_2010_td - e.mean_1940_1960)/10 }} °C</span>
+                        <line-year-simple :id='e.id' ind='tg' />
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -28,6 +34,7 @@
 <script>
 import { baseStore } from '@/stores/base.js';
 import List from "list.js";
+import LineYearSimple from "@/charts/LineYearSimple.vue";
 
 export default {
     setup() {
@@ -35,25 +42,32 @@ export default {
             baseStore: baseStore(),
         }
     },
+    components: {
+        LineYearSimple
+    },
+    data: () => ({
+        stations: []
+    }),
     mounted() {
-        const self = this;
-        const options = {
-          valueNames: [
-              'id', 'name', 'country', 'year_min',
-              'mean_1940_1960', 'mean_2010_td'
-          ],
-          // item: '<li><h3 class="id"></h3><p class="name"></p><p class="country"></p></li>',
-          item: 'template-item'
-        };
-
-        const values = this.baseStore.stations();
-
-        const sl = new List("stationList", options, values);
-        sl.sort('country', { order: "asc" });
-
-        this.$refs.stationList.addEventListener('click', function(e) {
-            self.$router.push({ name: 'station', params: { id: e.target.closest('li').querySelector('.id').innerHTML }})
-        })
+        this.stations = this.baseStore.stations();
+        // const self = this;
+        // const options = {
+        //   valueNames: [
+        //       'id', 'name', 'country', 'year_min',
+        //       'mean_1940_1960', 'mean_2010_td'
+        //   ],
+        //   // item: '<li><h3 class="id"></h3><p class="name"></p><p class="country"></p></li>',
+        //   item: 'template-item'
+        // };
+        //
+        // const values = this.baseStore.stations();
+        //
+        // const sl = new List("stationList", options, values);
+        // sl.sort('country', { order: "asc" });
+        //
+        // this.$refs.stationList.addEventListener('click', function(e) {
+        //     self.$router.push({ name: 'station', params: { id: e.target.closest('li').querySelector('.id').innerHTML }})
+        // })
     }
 }
 </script>
