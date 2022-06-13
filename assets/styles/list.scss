@@ -33,6 +33,9 @@
             width: 80px;
             text-align: right;
         }
+        &.highlight {
+            background-color: #EEE;
+        }
         &:hover {
             background-color: #EEE;
         }

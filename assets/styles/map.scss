@@ -38,6 +38,21 @@
 
 }
 
+.marker {
+    &.selected {
+        width: 15px;
+        height: 15px;
+        border-radius: 15px;
+        border: 3px solid black;
+    }
+    &.hover {
+        width: 13px;
+        height: 13px;
+        border-radius: 13px;
+        border: 3px solid #AAA;
+    }
+}
+
 // .watermark {
 //     position: absolute;
 //     left: 10px;

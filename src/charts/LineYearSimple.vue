@@ -39,8 +39,8 @@ export default {
         this.svg = d3.select(this.$refs.container).select("svg");
         this.g = this.svg.select("g.inner");
         this.stationStore.onLoaded(this.p, d => {
-            // this.data = d.filter(d => d.date.getFullYear() < 2020)
-            this.data = d
+            // this.data =
+            this.data = d.filter(d => d.date.getFullYear() >= 1936)
             this.plot();
             // this.plotPath();
         })
@@ -53,6 +53,7 @@ export default {
             const af = d => d[time]
 
             const data = this.data;
+            // console.log(data)
 
             this.g.selectAll("*").remove();
             const x = d3.scaleTime()
@@ -60,7 +61,7 @@ export default {
                 .range([0, this.innerWidth]);
 
             const xAxis = d3.axisTop(x)
-                .ticks(5)
+                .ticks(7)
                 .tickSizeInner(-this.innerHeight)
 
 
@@ -78,7 +79,7 @@ export default {
                 .range([this.innerHeight, 0]);
 
             const yAxis = d3.axisLeft(y)
-                .ticks(3)
+                .ticks(2)
                 .tickFormat(x => `${x.toFixed(1)} ${this.unit}`)
                 .tickSizeInner(-this.innerWidth)
 

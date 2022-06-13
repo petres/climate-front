@@ -43,7 +43,7 @@ const circleLayer = {
 	'type': 'circle',
 	'source': 'stations',
 	'paint': {
-		'circle-radius': 4,
+		'circle-radius': 5,
 		'circle-blur': 0,
 		'circle-color': ['get', 'color'],
 		// 'circle-color': '#008729',
@@ -60,7 +60,7 @@ var popup = new Popup({
 });
 
 export default {
-	props: ['id'],
+	props: ['id', 'highlight'],
     name: "Map",
     setup () {
         const mapContainer = shallowRef(null);
@@ -82,31 +82,23 @@ export default {
         return {
             map,
             mapContainer,
-            baseStore: baseStore(),
+            baseStore: baseStore()
         };
     },
 	computed: {
 		stationSource () {
-			const sv = d => d.mean_2010_td - d.mean_1940_1960;
-			const extent = d3.extent(this.baseStore.stations(), sv);
-			const color = d3.scaleLinear()
-    			.domain([0, extent[1]])
-				.range(['yellow', 'red'])
-
-			const f = d3.format("+.1f")
-
 			stationSourceTemplate.data.features = this.baseStore.stations()
 				// .filter(s => s.indices.includes("tg"))
 				// .filter(s => s.id < 100)
 				.map(s => {
-					const value = sv(s)
+					const value = this.getValue(s)
 					return {
 						'type': 'Feature',
 						'properties': {
 							'id': `${s.id}`,
-							'name': `${s.name} | ${f(value/10)} °C`,
+							'name': `${s.name} | ${this.formatNumber(value/10)} °C`,
 							'value': value,
-							'color': color(value),
+							'color': this.getColor(value),
 						},
 						'geometry': {
 							'type': 'Point',
@@ -117,9 +109,24 @@ export default {
 			return stationSourceTemplate;
 		}
 	},
+	data: () => ({
+		markers: {
+			selected: null,
+			hover: null
+		},
+		getColor: null,
+		formatNumber: d3.format("+.1f"),
+		getValue: d => d.mean_2010_td - d.mean_1940_1960,
+	}),
     mounted: function() {
         // console.log(this.map)
 		const self = this;
+
+		const extent = d3.extent(this.baseStore.stations(), this.getValue);
+		self.getColor = d3.scaleLinear()
+			.domain([0, extent[1]])
+			.range(['yellow', 'red'])
+
 		this.map.on('load', function () {
 			self.map.addSource('stations', self.stationSource);
 			self.map.addLayer(circleLayer);
@@ -130,6 +137,7 @@ export default {
 				// 	.setLngLat(e.lngLat)
 				// 	.setHTML(e.features[0].properties.name)
 				// 	.addTo(self.map);
+
 				self.$router.push({ name: 'station', params: { id: e.features[0].properties.id }})
 					//alert(`Clicked ${id}`);
 			});
@@ -140,27 +148,58 @@ export default {
 					.setLngLat(e.lngLat)
 					.setHTML(e.features[0].properties.name)
 					.addTo(self.map);
+
+				self.setMarker(e.features[0].properties.id, 'hover')
+				self.$emit('highlight', e.features[0].properties.id)
 			});
 
-			self.map.on('mouseleave', 'stations', function () {
-				self.map.getCanvas().style.cursor = '';
-				popup.remove();
-			});
+			// self.map.on('mouseleave', 'stations', function () {
+			// 	self.map.getCanvas().style.cursor = '';
+			// 	popup.remove();
+			// 	self.setMarker(null, 'hover')
+			// 	self.$emit('highlight', null)
+			// });
 
 			self.$watch(
 				() => self.id,
 				(n, o) => {
-					// if (n in markers)
-					// 	markers[n].getElement().classList.add('active');
-					// if (o in markers)
-					// 	markers[o].getElement().classList.remove('active');
+					self.setMarker(n)
 				},
 				{ immediate : true}
+			)
+
+			self.$watch(
+				() => self.highlight,
+				(n, o) => {
+					self.setMarker(n, 'hover')
+				},
 			)
 		});
     },
 	methods: {
+		setMarker(id, type = "selected") {
+			const self = this;
+			if (this.markers[type] !== null) {
+				this.markers[type].remove()
+				this.markers[type] = null;
+			}
 
+			if (id !== null && id !== undefined) {
+				const info = this.baseStore.station(id)
+
+				var el = document.createElement('div');
+				el.className = `marker ${type}`;
+				el.style.backgroundColor = this.getColor(this.getValue(info))
+
+				this.markers[type] = new Marker(el)
+					.setLngLat(info.coords)
+					.addTo(this.map);
+
+				this.markers[type].getElement().addEventListener('click', () => {
+					self.$router.push({ name: 'station', params: { id: id }})
+				});
+			}
+		},
 	}
 };
 </script>

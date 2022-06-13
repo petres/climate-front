@@ -7,7 +7,7 @@
                 <!-- <input class="fuzzy-search" placeholder="Search" /> -->
 
 
-                <ul class="list">
+                <ul id="station-list" class="list">
                     <li class="header">
                         <span class="country">Ctry</span>
                         <span class="name">Name</span>
@@ -16,7 +16,7 @@
                         <span class="mean_2010_td">Mean<br/>2010-today</span>
                         <span class="diff">Diff.</span>
                     </li>
-                    <li v-for='e in stations' @click='$router.push({ name: "station", params: { id: e.id }})'>
+                    <li v-for='e in stations' :id='`station-${e.id}`' @mouseover="removeHighlight(); $emit('highlight', e.id)" @mouseleave="$emit('highlight', null)" @click='$router.push({ name: "station", params: { id: e.id }})'>
                         <span class="country">{{ e.country }}</span>
                         <span class="name">{{ e.name }}</span>
                         <span class="year_min">{{ e.year_min }}</span>
@@ -45,29 +45,35 @@ export default {
     components: {
         LineYearSimple
     },
+    props: ["highlight"],
     data: () => ({
         stations: []
     }),
+    watch: {
+        highlight(id) {
+            // console.log(id)
+            this.removeHighlight()
+            if (id !== null) {
+                const el = document.getElementById(`station-${id}`);
+                el.classList.add('highlight');
+                el.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                });
+            }
+        }
+    },
     mounted() {
         this.stations = this.baseStore.stations();
-        // const self = this;
-        // const options = {
-        //   valueNames: [
-        //       'id', 'name', 'country', 'year_min',
-        //       'mean_1940_1960', 'mean_2010_td'
-        //   ],
-        //   // item: '<li><h3 class="id"></h3><p class="name"></p><p class="country"></p></li>',
-        //   item: 'template-item'
-        // };
-        //
-        // const values = this.baseStore.stations();
-        //
-        // const sl = new List("stationList", options, values);
-        // sl.sort('country', { order: "asc" });
-        //
-        // this.$refs.stationList.addEventListener('click', function(e) {
-        //     self.$router.push({ name: 'station', params: { id: e.target.closest('li').querySelector('.id').innerHTML }})
-        // })
+    },
+    methods: {
+        removeHighlight() {
+            const container = document.getElementById('station-list');
+            const elements = container.getElementsByClassName('highlight');
+            for (const e of elements) {
+                e.classList.remove('highlight');
+            }
+        }
     }
 }
 </script>
