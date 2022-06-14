@@ -43,7 +43,7 @@ const circleLayer = {
 	'type': 'circle',
 	'source': 'stations',
 	'paint': {
-		'circle-radius': 5,
+		'circle-radius': 4,
 		'circle-blur': 0,
 		'circle-color': ['get', 'color'],
 		// 'circle-color': '#008729',
@@ -194,6 +194,14 @@ export default {
 				this.markers[type] = new Marker(el)
 					.setLngLat(info.coords)
 					.addTo(this.map);
+
+				if(!this.map.getBounds().contains(info.coords)) {
+					this.map.flyTo({
+						center: info.coords,
+						essential: true,
+						speed: 1
+					});
+				}
 
 				this.markers[type].getElement().addEventListener('click', () => {
 					self.$router.push({ name: 'station', params: { id: id }})
