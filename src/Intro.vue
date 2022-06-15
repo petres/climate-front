@@ -57,7 +57,7 @@ export default {
                 const el = document.getElementById(`station-${id}`);
                 el.classList.add('highlight');
                 el.scrollIntoView({
-                    behavior: "smooth",
+                    // behavior: "smooth",
                     block: "center",
                 });
             }

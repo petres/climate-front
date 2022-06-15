@@ -119,8 +119,9 @@ export default {
 		getValue: d => d.mean_2010_td - d.mean_1940_1960,
 	}),
     mounted: function() {
-        // console.log(this.map)
 		const self = this;
+
+		self.stations = this.baseStore.stations();
 
 		const extent = d3.extent(this.baseStore.stations(), this.getValue);
 		self.getColor = d3.scaleLinear()
@@ -131,26 +132,33 @@ export default {
 			self.map.addSource('stations', self.stationSource);
 			self.map.addLayer(circleLayer);
 
-			self.map.on('click', 'stations', function (e) {
-				// console.log(e.features[0].properties.name)
-				// popup
-				// 	.setLngLat(e.lngLat)
-				// 	.setHTML(e.features[0].properties.name)
-				// 	.addTo(self.map);
+			// self.map.on('click', 'stations', function (e) {
+			// 	// console.log(e.features[0].properties.name)
+			// 	// popup
+			// 	// 	.setLngLat(e.lngLat)
+			// 	// 	.setHTML(e.features[0].properties.name)
+			// 	// 	.addTo(self.map);
+			//
+			// 	self.$router.push({ name: 'station', params: { id: e.features[0].properties.id }})
+			// 		//alert(`Clicked ${id}`);
+			// });
 
-				self.$router.push({ name: 'station', params: { id: e.features[0].properties.id }})
-					//alert(`Clicked ${id}`);
-			});
+			// self.map.on('mouseenter', 'stations', function (e) {
+			// 	self.map.getCanvas().style.cursor = 'pointer';
+			// 	// popup
+			// 	// 	.setLngLat(e.lngLat)
+			// 	// 	.setHTML(e.features[0].properties.name)
+			// 	// 	.addTo(self.map);
+			//
+			// 	self.setMarker(e.features[0].properties.id, 'hover')
+			// 	self.$emit('highlight', e.features[0].properties.id)
+			// });
 
-			self.map.on('mouseenter', 'stations', function (e) {
-				self.map.getCanvas().style.cursor = 'pointer';
-				popup
-					.setLngLat(e.lngLat)
-					.setHTML(e.features[0].properties.name)
-					.addTo(self.map);
-
-				self.setMarker(e.features[0].properties.id, 'hover')
-				self.$emit('highlight', e.features[0].properties.id)
+			self.map.on('mousemove', function (e) {
+				const p = [e.lngLat.lng, e.lngLat.lat];
+				const mi = d3.minIndex(self.stations, i => Math.sqrt((i.coords[0] - p[0]) ** 2 + (i.coords[1] - p[1]) ** 2));
+				self.setMarker(self.stations[mi].id, 'hover')
+				self.$emit('highlight', self.stations[mi].id)
 			});
 
 			// self.map.on('mouseleave', 'stations', function () {
@@ -185,11 +193,12 @@ export default {
 			}
 
 			if (id !== null && id !== undefined) {
-				const info = this.baseStore.station(id)
-
+				const info = this.baseStore.station(id);
+				const value = this.getValue(info);
 				var el = document.createElement('div');
 				el.className = `marker ${type}`;
-				el.style.backgroundColor = this.getColor(this.getValue(info))
+				el.style.backgroundColor = this.getColor(value);
+				el.innerHTML = `<span>${this.formatNumber(value/10)}<br/>°C</span>`;
 
 				this.markers[type] = new Marker(el)
 					.setLngLat(info.coords)
