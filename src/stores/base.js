@@ -6,7 +6,10 @@ const sources = {
         src: 'data/stations.json',
         trans: d => {
             d.forEach(s => {
+                // TODO: correct in preparation
                 s.coords.reverse();
+                if (!Array.isArray(s.indices))
+                    s.indices = [s.indices];
             });
 
             return Object.assign({}, ...d.map((x) => ({[x.id]: x})))

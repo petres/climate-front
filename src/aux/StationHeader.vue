@@ -5,7 +5,7 @@
             Id: {{ station.id }},
             Height: {{ station.height }},
             Coords: {{ station.coords }}<br/>
-            <!-- Indices: {{ station.indices }} -->
+            Indices: {{ station.indices }}
         </span>
     </div>
 </template>
