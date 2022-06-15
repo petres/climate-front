@@ -6,6 +6,9 @@ $colorAvg: map.get($colors, "avg");
 $colorPos: map.get($colors, "pos");
 $colorNeg: map.get($colors, "neg");
 
+text {
+    font-family: Helvetica, Arial, sans-serif;
+}
 svg {
     g.x-axis {
         font-size: 12px;
@@ -43,11 +46,53 @@ svg.line-year-chart {
         stroke: $colorYear;
         opacity: 1;
     }
-    line.avg {
-        stroke-width: 1.5;
-        stroke: $colorAvg;
-        // opacity: 0.6;
+
+    rect.avg {
+        opacity: 0.1;
+        fill: none;
+        &.avgP1 {
+            fill: $colorNeg;
+        }
+        &.avgP2 {
+            fill: $colorPos;
+        }
     }
+
+    line.avg {
+        stroke: $colorAvg;
+        stroke-width: 1.5;
+        opacity: 0.5;
+        &.avgP1 {
+            stroke: $colorNeg;
+            opacity: 0.7;
+        }
+        &.avgP2 {
+            stroke: $colorPos;
+            opacity: 0.7;
+        }
+    }
+
+    text.avg {
+        stroke: $colorAvg;
+        font-size: 12px;
+        dominant-baseline: middle;
+        font-weight: normal;
+        stroke-width: 0px;
+        &.avgP1 {
+            fill: darken($colorNeg, 30%);
+            text-anchor: start;
+        }
+        &.avgP2 {
+            fill: darken($colorPos, 30%);
+            text-anchor: end;
+        }
+        &.avgBack {
+            stroke: white;
+            stroke-width: 4px;
+            opacity: 0.8;
+        }
+    }
+
     .domain {
         visibility: hidden;
     }

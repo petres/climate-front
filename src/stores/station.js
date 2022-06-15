@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios';
 import * as d3 from "d3";
+import { isDefined } from '@/globals.js'
 
 const sources = {
     daily: {
@@ -28,6 +29,7 @@ const sources = {
         src: 'y.csv',
         trans: d => d.map(d => ({
             date: new Date(`${d.date}-01-01`),
+            year: +d.date,
             v1: +d.value/10,
         }))
     },
@@ -38,7 +40,14 @@ export const stationStore = defineStore('station', {
     state: () => ({ yearly: {}, monthly: {}, daily: {} }),
     getters: {
         loaded: (s) => (p) => p.id in s[p.period] && p.ind in s[p.period][p.id],
-        data: (s) => (p) => s[p.period][p.id][p.ind]
+        data: (s) => (p) => s[p.period][p.id][p.ind],
+        average: (s) => (p, col, y0 = 0, y1 = Infinity) => {
+            const d = s.data(p);
+            const d_f = d.filter(e => isDefined(e[col]) && e.year <= y1 && e.year >= y0).map(e => e[col]);
+            const avg = d_f.reduce( ( p, c ) => p + c, 0 ) / d_f.length;
+
+            return avg;
+        },
     },
     actions: {
         load(p) {

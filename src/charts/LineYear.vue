@@ -28,6 +28,7 @@
 import * as d3 from "d3";
 import { stationStore } from '@/stores/station.js'
 import { baseStore } from '@/stores/base.js'
+import { isDefined, periods, diffFormater } from '@/globals.js'
 
 export default {
     props: ['id', 'ind'],
@@ -70,38 +71,27 @@ export default {
         )
     },
     methods: {
-        def: v => typeof v == 'number' && !isNaN(v),
         plot() {
             const self = this;
             const time = 'v1'
             const af = d => d[time]
-            // const data = this.data.filter(d => def(af(d)));
+
             const data = this.data;
 
-            // console.log(data.map(d => ({
-            //     date: d.date,
-            //     value: af(d),
-            //     isdef: def(af(d))
-            // })))
-
             this.g.selectAll("*").remove();
-            const x = d3.scaleTime()
-                .domain(d3.extent(data, d => d.date))
+            const xExtent = d3.extent(data, d => d.year);
+            const x = d3.scaleLinear()
+                .domain(xExtent)
                 .range([0, this.innerWidth]);
 
             const xAxis = d3.axisTop(x)
                 .ticks(5)
+                .tickFormat(x => `${x}`)
                 .tickSizeInner(-this.innerHeight)
 
 
             this.g.append("g")
-                // .attr("transform", `translate(0, ${this.height})`)
                 .call(xAxis);
-
-            // Add Y axis
-            const dataDef = data.filter(e => this.def(af(e))).map(e => af(e));
-            const avg = dataDef.reduce( ( p, c ) => p + c, 0 ) / dataDef.length;
-
 
             const y = d3.scaleLinear()
                 .domain(d3.extent(data, d => af(d)))
@@ -115,19 +105,54 @@ export default {
             this.g.append("g")
                 .call(yAxis);
 
-            this.g.append("line")
-                .attr("class", 'avg')
-                .attr("x1", 0)
-                .attr("y1", y(avg))
-                .attr("x2", this.innerWidth)
-                .attr("y2", y(avg))
+            // const avg = this.stationStore.average(this.p, time);
+            // const avgY = y(avg);
+            // this.g.append("line")
+            //     .attr("class", 'avg')
+            //     .attr("x1", 0)
+            //     .attr("y1", avgY)
+            //     .attr("x2", this.innerWidth)
+            //     .attr("y2", avgY)
+
+            const avgs = [
+                {name: "avg", years: xExtent},
+                // {name: "avgP1", years: periods.p1},
+                // {name: "avgP2", years: periods.p2},
+            ];
+
+            avgs.forEach(i => {
+                const avg = this.stationStore.average(this.p, time, i.years[0], i.years[1]);
+                const avg_y = y(avg);
+
+                const x1 = x(i.years[0]);
+                const x2 = x(i.years[1]);
+
+                this.g.append("rect")
+                    .attr("class", `avg ${i.name}`)
+                    .attr("x", x1)
+                    .attr("y", 0)
+                    .attr("width", x2 - x1)
+                    .attr("height", this.innerHeight)
+
+                this.g.append("line")
+                    .attr("class", `avg ${i.name}`)
+                    .attr("x1", x1)
+                    .attr("y1", avg_y)
+                    .attr("x2", x2)
+                    .attr("class", `avg ${i.name}`)
+                    .attr("x1", x1)
+                    .attr("y1", avg_y)
+                    .attr("x2", x2)
+                    .attr("y2", avg_y)
+                    .attr("y2", avg_y)
+            });
 
             this.g.append("path")
                 .datum(data)
                 .attr("class", 'line')
                 .attr("d", d3.line()
-                    .defined(d => this.def(af(d)))
-                    .x(d => x(d.date))
+                    .defined(d => isDefined(af(d)))
+                    .x(d => x(d.year))
                     .y(d => y(af(d)))
                 )
 
@@ -144,8 +169,7 @@ export default {
 
             const setYear = (y, t) => {
                 if (y !== null) {
-                    const d = new Date(`${y}-01-01`)
-                    ls[t].b.attr('transform', `translate(${x(d)}, 0)`)
+                    ls[t].b.attr('transform', `translate(${x(y)}, 0)`)
                     ls[t].t.text(y)
                 } else {
                     ls[t].b.attr('visibility', 'hidden')
@@ -156,9 +180,7 @@ export default {
             let handle = 'h';
             const getYearFromE = function(e) {
                 const p = d3.pointer(e);
-                const d = x.invert(p[0]);
-                const y = d.getFullYear();
-                return d.getMonth() < 6 ? y : y+1;
+                return Math.round(x.invert(p[0]));
             }
             this.svg.select('rect.cap')
                 .on('mousemove', function(e) {
