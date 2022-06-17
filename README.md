@@ -12,5 +12,5 @@ Providing bare weather data visualisation to get an basic idea of the ocurring c
 
 The [European Climate Assessment & Dataset project](https://www.ecad.eu/) provides data for more than 15.000 weather stations in europe. 
 
-The data is not provided in this repository, it can be downloaded [here](https://www.ecad.eu/dailydata/predefinedseries.php).
-The preparation steps are straightforward, I will add the code of these preparation steps in an extra repo.
+The data used is not provided in this repository. The raw data can be downloaded [here](https://www.ecad.eu/dailydata/predefinedseries.php).
+The raw data needs some preparation steps which are quite straightforward, I will add the code of these preparation steps in an extra repo. To run this repo you can download the prepared data used on the web server [https://climate.abteil.org/data](https://climate.abteil.org/data.tar.gz).
