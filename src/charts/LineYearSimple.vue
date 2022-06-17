@@ -12,10 +12,10 @@
 import * as d3 from "d3";
 import { stationStore } from '@/stores/station.js'
 import { baseStore } from '@/stores/base.js'
-import { isDefined, periods, baseFormater } from '@/globals.js'
+import { isDefined, baseFormatter } from '@/globals.js'
 
 export default {
-    props: ['id', 'ind'],
+    props: ['id', 'ind', 'periods'],
     setup() {
         return {
             stationStore: stationStore(),
@@ -26,7 +26,7 @@ export default {
         m: {
             t: 25, r: 35, b: 5, l: 50
         },
-        width: 100,
+        width: 600,
         height: 80
     }),
     computed: {
@@ -36,7 +36,7 @@ export default {
         unit () { return this.baseStore.indicator(this.ind).unit; },
     },
     mounted() {
-        this.width = this.$refs.container.clientWidth
+        // this.width = this.$refs.container.clientWidth
         this.svg = d3.select(this.$refs.container).select("svg");
         this.g = this.svg.select("g.inner");
         this.stationStore.onLoaded(this.p, d => {
@@ -96,8 +96,8 @@ export default {
 
                 const avgs = [
                     {name: "avg", years: xExtent},
-                    {name: "avgP1", years: periods.p1},
-                    {name: "avgP2", years: periods.p2},
+                    {name: "avgP1", years: this.periods[0].years},
+                    {name: "avgP2", years: this.periods[1].years},
                 ];
 
                 avgs.forEach(i => {
@@ -123,7 +123,7 @@ export default {
 
                     if (i.name != "avg") {
                         const x = (i.name == "avgP1") ? x2 : x1;
-                        const t = `${baseFormater(avg)} °C`
+                        const t = `${baseFormatter(avg)} ${this.unit}`
                         this.g.append("text")
                             .attr("class", `avg avgBack ${i.name}`)
                             .attr("x", x)

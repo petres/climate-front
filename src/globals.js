@@ -1,4 +1,4 @@
-export { isDefined, periods, diffFormater, baseFormater };
+export { isDefined, periods, diffFormatter, baseFormatter };
 
 import * as d3 from "d3";
 
@@ -9,5 +9,5 @@ const periods = {
     p2: [2010, 2022],
     // p2: [2000, 2022],
 }
-const diffFormater = d3.format("+.1f")
-const baseFormater = d3.format(".1f")
+const diffFormatter = d3.format("+.1f")
+const baseFormatter = d3.format(".1f")

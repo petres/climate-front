@@ -28,7 +28,7 @@
 import * as d3 from "d3";
 import { stationStore } from '@/stores/station.js'
 import { baseStore } from '@/stores/base.js'
-import { isDefined, periods, diffFormater } from '@/globals.js'
+import { isDefined, periods } from '@/globals.js'
 
 export default {
     props: ['id', 'ind'],

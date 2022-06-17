@@ -1,6 +1,7 @@
 <template>
     <div class="map-wrap">
-        <div class="map" ref="mapContainer"></div>
+		<div class="map" ref="mapContainer"></div>
+        <legend-aux :scale="getColor" :formatter="formatNumber" :text="text"/>
     </div>
 </template>
 
@@ -8,6 +9,7 @@
 import { baseStore } from '@/stores/base.js'
 import { Map, Marker, Popup } from 'maplibre-gl';
 import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
+import LegendAux from '@/aux/Legend.vue'
 import * as d3 from "d3";
 
 const state = { lng: 14.5501, lat: 47.5162, zoom: 4 };
@@ -85,6 +87,9 @@ export default {
             baseStore: baseStore()
         };
     },
+	components: {
+		LegendAux
+	},
 	computed: {
 		stationSource () {
 			stationSourceTemplate.data.features = this.baseStore.stations()
@@ -116,7 +121,8 @@ export default {
 		},
 		getColor: null,
 		formatNumber: d3.format("+.1f"),
-		getValue: d => d.mean_2010_td - d.mean_1940_1960,
+		text: "Diff. 2010-2022 <br/>to 1940-1960 <br/>in °C", 
+		getValue: d => (d.mean_2010_td - d.mean_1940_1960)/10,
 	}),
     mounted: function() {
 		const self = this;
@@ -126,7 +132,8 @@ export default {
 		const extent = d3.extent(this.baseStore.stations(), this.getValue);
 		self.getColor = d3.scaleLinear()
 			.domain([0, extent[1]])
-			.range(['yellow', 'red'])
+			// .domain([-extent[1], extent[1]])
+			.range(['white', '#f23c06'])
 
 		this.map.on('load', function () {
 			self.map.addSource('stations', self.stationSource);
@@ -198,7 +205,7 @@ export default {
 				var el = document.createElement('div');
 				el.className = `marker ${type}`;
 				el.style.backgroundColor = this.getColor(value);
-				el.innerHTML = `<span>${this.formatNumber(value/10)}<br/>°C</span>`;
+				el.innerHTML = `<span>${this.formatNumber(value)}<br/>°C</span>`;
 
 				this.markers[type] = new Marker(el)
 					.setLngLat(info.coords)

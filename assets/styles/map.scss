@@ -39,10 +39,10 @@
 }
 
 $marker-size: 27px;
-$marker-border: 2px;
+$marker-border: 0px;
 .marker {
     opacity: 0.8;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: bold;
     line-height: 10px;
     text-align: center;
@@ -70,3 +70,15 @@ $marker-border: 2px;
 //     bottom: 10px;
 //     z-index: 999;
 // }
+
+
+#legend-overlay {
+    .text {
+        font-size: 10px;
+        text-align: right;
+        font-weight: bold;
+    }
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
