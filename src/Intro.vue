@@ -1,27 +1,17 @@
 <template>
     <div class="station">
         <div class="station-inner" style="position: relative">
-            <h2>Climate Data</h2>
-            <p>Meteorological station data collected by <a href="https://www.ecad.eu/dailydata/index.php">ECAD</a> is visualized on this page. In this dataset more than 15000 stations included, we are only using a subsample which have a long history available.</p>
+            <h2>Temperature Station Data</h2>
+            <p>Meteorological station data collected by <a href="https://www.ecad.eu/dailydata/index.php">ECAD</a> is visualized on this page. In this dataset more than 15.000 stations included, we are only using a subsample which have a long history available.</p>
             <div id="stationList" ref='stationList'>
                 <ul id="station-list" class="list">
-                    <li class="header">
+                    <!-- <li class="header">
                         <span class="country">Ctry</span>
                         <span class="name">Name</span>
                         <span class="year_min">First<br/>Year</span>
-                        <span class="mean_1940_1960">Mean<br/>{{ periods[0].years[0] }}-{{ periods[0].years[1] }}</span>
-                        <span class="mean_2010_td">Mean<br/>{{ periods[1].years[0] }}-{{ periods[1].years[1] }}</span>
                         <span class="diff">Diff.</span>
-                    </li>
-                    <li v-for='e in stations' :id='`station-${e.id}`' @mouseover="removeHighlight(); $emit('highlight', e.id)" @mouseleave="$emit('highlight', null)" @click='$router.push({ name: "station", params: { id: e.id }})'>
-                        <span class="country">{{ e.country }}</span>
-                        <span class="name">{{ e.name }}</span>
-                        <span class="year_min">{{ e.year_min }}</span>
-                        <span class="mean_1940_1960">{{ Math.round(e.mean_1940_1960)/10 }} °C</span>
-                        <span class="mean_2010_td">{{ Math.round(e.mean_2010_td)/10 }} °C</span>
-                        <span class="diff">{{ Math.round(e.mean_2010_td - e.mean_1940_1960)/10 }} °C</span>
-                        <line-year-simple :id='e.id' ind='tg' :periods='periods'/>
-                    </li>
+                    </li> -->
+                    <list-entry :periods='periods' v-for='e in stations' :station="e" @mouseover="removeHighlight(); $emit('highlight', e.id)" @mouseleave="$emit('highlight', null)" @click='$router.push({ name: "station", params: { id: e.id }})'/>
                 </ul>
             </div>
         </div>
@@ -30,8 +20,7 @@
 
 <script>
 import { baseStore } from '@/stores/base.js';
-import List from "list.js";
-import LineYearSimple from "@/charts/LineYearSimple.vue";
+import ListEntry from "@/Entry.vue";
 
 export default {
     setup() {
@@ -40,7 +29,7 @@ export default {
         }
     },
     components: {
-        LineYearSimple
+        ListEntry
     },
     props: ["highlight", "periods"],
     data: () => ({

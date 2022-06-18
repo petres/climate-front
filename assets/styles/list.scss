@@ -6,49 +6,95 @@
     padding: 0;
     font-size: 14px;
     li {
+        position: relative;
+        height: 88px;
         display: block;
-        padding: 8px 0;
-        border-bottom: 1px #CCC solid;
+        border-top: 1px #DDD solid;
         cursor: pointer;
-        .country {
-            font-weight: bold;
-            text-align: center;
-            display: inline-block;
-            width: 50px;
-            text-align: center;
+
+        .info {
+            top: 15px;
+            left: 5px;
+            position: relative;
+            .country {
+                position: absolute;
+                top: 0px;
+                left: 0;
+                font-weight: bold;
+            }
+
+            .name {
+                // display: inline-block;
+                position: absolute;
+                top: 18px;
+                font-size: 12px;
+                max-width: 150px;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+
+            .year_min {
+                // display: inline-block;
+                position: absolute;
+                top: 42px;
+                left: 0px;
+            }
+
+            .diff {
+                // display: inline-block;
+                position: absolute;
+                top: 42px;
+                left: 75px;
+            }
         }
 
-        .name {
-            white-space: nowrap;
-            display: inline-block;
-            width: 250px;
+        .line {
+            position: absolute;
+            top: 4px;
+            right: 0px;
+            width: calc(100% - 170px);
         }
-        .year_min {
-            width: 80px;
-            display: inline-block;
-            text-align: center;
-        }
-        .mean_1940_1960, .mean_2010_td, .diff {
-            display: inline-block;
-            width: 80px;
-            text-align: right;
-        }
+
+        // .country {
+        //     font-weight: bold;
+        //     text-align: center;
+        //     display: inline-block;
+        //     width: 50px;
+        //     text-align: center;
+        // }
+        //
+        // .name {
+        //     white-space: nowrap;
+        //     display: inline-block;
+        //     width: 250px;
+        // }
+        // .year_min {
+        //     width: 80px;
+        //     display: inline-block;
+        //     text-align: center;
+        // }
+        // .mean_1940_1960, .mean_2010_td, .diff {
+        //     display: inline-block;
+        //     width: 80px;
+        //     text-align: right;
+        // }
+
         &.highlight {
             background-color: #EEE;
         }
         &:hover {
             background-color: #EEE;
         }
-        &.header {
-            font-weight: bold;
-            .mean_1940_1960, .mean_2010_td, .diff {
-                text-align: right;
-            }
-            &:hover {
-                background-color: #FFF;
-            }
-            padding-bottom: 2px;
-            border-bottom: 1px #888 solid;
-        }
+        // &.header {
+        //     font-weight: bold;
+        //     .mean_1940_1960, .mean_2010_td, .diff {
+        //         text-align: right;
+        //     }
+        //     &:hover {
+        //         background-color: #FFF;
+        //     }
+        //     padding-bottom: 2px;
+        //     border-bottom: 1px #888 solid;
+        // }
     }
 }

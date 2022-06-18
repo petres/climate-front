@@ -11,6 +11,7 @@ import { Map, Marker, Popup } from 'maplibre-gl';
 import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
 import LegendAux from '@/aux/Legend.vue'
 import * as d3 from "d3";
+import { diffFormatter } from '@/globals.js'
 
 const state = { lng: 14.5501, lat: 47.5162, zoom: 4 };
 const style = {
@@ -101,7 +102,7 @@ export default {
 						'type': 'Feature',
 						'properties': {
 							'id': `${s.id}`,
-							'name': `${s.name} | ${this.formatNumber(value/10)} °C`,
+							'name': `${s.name} | ${diffFormatter(value/10)} °C`,
 							'value': value,
 							'color': this.getColor(value),
 						},
@@ -120,8 +121,8 @@ export default {
 			hover: null
 		},
 		getColor: null,
-		formatNumber: d3.format("+.1f"),
-		text: "Diff. 2010-2022 <br/>to 1940-1960 <br/>in °C", 
+		formatNumber: diffFormatter,
+		text: "Diff. 2010-2022 <br/>to 1940-1960 <br/>in °C",
 		getValue: d => (d.mean_2010_td - d.mean_1940_1960)/10,
 	}),
     mounted: function() {

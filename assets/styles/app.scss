@@ -10,10 +10,20 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: Helvetica, sans-serif;
 }
 
+text {
+    font-family: Helvetica, sans-serif;
+}
 
+p {
+    line-height: 1.4em;
+}
+
+h2 {
+    margin-bottom: 0.4em;
+}
 
 .combined {
     .map-wrap {
@@ -28,7 +38,7 @@ body {
         max-height: 100vh;
         overflow-y: scroll;
         .station-inner {
-            margin: 20px;
+            margin: 30px;
         }
     }
 }
@@ -72,6 +82,6 @@ body {
 .station-header {
     height: 70px;
     h2 {
-        font-size: 1.3em
+        font-size: 1.3em;
     }
 }

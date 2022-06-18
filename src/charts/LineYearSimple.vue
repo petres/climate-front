@@ -24,9 +24,9 @@ export default {
     },
     data: () => ({
         m: {
-            t: 25, r: 35, b: 5, l: 50
+            t: 15, r: 5, b: 5, l: 50
         },
-        width: 600,
+        width: 0,
         height: 80
     }),
     computed: {
@@ -36,7 +36,7 @@ export default {
         unit () { return this.baseStore.indicator(this.ind).unit; },
     },
     mounted() {
-        // this.width = this.$refs.container.clientWidth
+        this.width = this.$refs.container.clientWidth
         this.svg = d3.select(this.$refs.container).select("svg");
         this.g = this.svg.select("g.inner");
         this.stationStore.onLoaded(this.p, d => {
