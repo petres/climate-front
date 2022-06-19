@@ -1,5 +1,5 @@
 <template>
-    <li :id='`station-${station.id}`'>
+    <li :id='`station-${station.id}`' @click='$router.push({ name: "station", params: { id: station.id }})' @mouseover="$emit('highlight', station.id)" @mouseleave="$emit('highlight', null)">
         <div class="info">
             <div class="country"><span>{{ station.country }}</span></div>
             <div class="name" :title='station.name'><span>{{ station.name }}</span></div>

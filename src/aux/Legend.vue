@@ -47,7 +47,7 @@ export default {
             var d = this.scale.domain()
             var scale = d3.scaleLinear()
                 .domain(d)
-                .range([0, this.innerHeight - 1]);
+                .range([this.innerHeight - 1, 0]);
 
                 //.domain(d3.extent(d));
 
