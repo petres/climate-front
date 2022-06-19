@@ -7,7 +7,8 @@
                 is visualized on this page. In this dataset more than 15.000 stations included, we are only using
                 a subsample which have a long history available.
             </p><p>
-                The code of this website can be found at <a target="_blank" href="https://github.com/petres/climate-front">https://github.com/petres/climate-front</a> 
+                The source code of this website can be found at <a target="_blank" href="https://github.com/petres/climate-front">https://github.com/petres/climate-front</a>.
+                Any contribution is welcome!
             </p>
             <div id="stationList" ref='stationList'>
                 <ul id="station-list" class="list">

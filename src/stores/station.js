@@ -45,7 +45,6 @@ export const stationStore = defineStore('station', {
             const d = s.data(p);
             const d_f = d.filter(e => isDefined(e[col]) && e.year <= y1 && e.year >= y0).map(e => e[col]);
             const avg = d_f.reduce( ( p, c ) => p + c, 0 ) / d_f.length;
-
             return avg;
         },
     },
