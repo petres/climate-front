@@ -38,13 +38,13 @@
 
 }
 
-$marker-size: 27px;
+$marker-size: 31px;
 $marker-border: 0px;
 .marker {
     opacity: 0.8;
-    font-size: 9px;
+    font-size: 11px;
     font-weight: bold;
-    line-height: 10px;
+    line-height: 12px;
     text-align: center;
     &.selected {
         width: $marker-size;

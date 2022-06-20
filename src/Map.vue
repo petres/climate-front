@@ -48,6 +48,8 @@ const circleLayer = {
 	'paint': {
 		'circle-radius': 4,
 		'circle-blur': 0,
+		'circle-stroke-color': "#888",
+		'circle-stroke-width': 1,
 		'circle-color': ['get', 'color'],
 		// 'circle-color': '#008729',
 		//'circle-opacity': 0.6,
@@ -132,9 +134,10 @@ export default {
 
 		const extent = d3.extent(this.baseStore.stations(), this.getValue);
 		self.getColor = d3.scaleLinear()
-			.domain([0, extent[1]])
+			.domain(extent)
+			// .domain([0, extent[1]])
 			// .domain([-extent[1], extent[1]])
-			.range(['white', '#f23c06'])
+			.range(['yellow', '#f23c06'])
 
 		this.map.on('load', function () {
 			self.map.addSource('stations', self.stationSource);

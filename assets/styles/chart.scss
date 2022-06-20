@@ -47,6 +47,10 @@ svg.line-year-chart {
         opacity: 1;
     }
 
+    g.points circle {
+        opacity: 0.8;
+    }
+
     rect.avg {
         opacity: 0.1;
         fill: none;
