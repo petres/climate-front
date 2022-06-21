@@ -1,6 +1,5 @@
 const { VueLoaderPlugin } = require('vue-loader')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin  = require('mini-css-extract-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const path = require('path')
@@ -56,12 +55,6 @@ module.exports = {
             template: 'index.html',
             inject: true,
             publicPath: '/',
-        }),
-        new CopyWebpackPlugin({
-            patterns: [
-              { from: "assets/data", to: "data" },
-              { from: "assets/.htaccess", to: "" },
-            ],
         }),
         new MiniCssExtractPlugin({
             filename: 'main.[hash].css',
