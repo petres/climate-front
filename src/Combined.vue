@@ -1,7 +1,7 @@
 <template>
     <div class="combined">
         <station v-if='id' :id='id' />
-        <intro v-else :highlight='highlightList' :periods='periods' @highlight="id => highlightMap = id"/>
+        <intro v-else :highlight='highlightList' @highlight="id => highlightMap = id"/>
         <station-map :id='id' :highlight='highlightMap' @highlight="id => highlightList = id"/>
     </div>
 </template>
@@ -20,11 +20,7 @@ export default {
     },
     data: () => ({
         highlightMap: null,
-        highlightList: null,
-        periods: [
-            { years: [1940, 1960]},
-            { years: [2010, 2022]},
-        ]
+        highlightList: null
     }),
     created: function() {
         // this.$store.dispatch('init')

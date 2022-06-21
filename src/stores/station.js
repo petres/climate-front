@@ -37,13 +37,18 @@ const sources = {
 
 
 export const stationStore = defineStore('station', {
-    state: () => ({ yearly: {}, monthly: {}, daily: {} }),
+    state: () => ({
+        yearly: {}, monthly: {}, daily: {}, avgs: {},
+    }),
     getters: {
         loaded: (s) => (p) => p.id in s[p.period] && p.ind in s[p.period][p.id],
+        calced: (s) => (p) => p.id in s.avgs && p.ind in s.avgs[p.id],
         data: (s) => (p) => s[p.period][p.id][p.ind],
-        average: (s) => (p, col, y0 = 0, y1 = Infinity) => {
+        calcedAvg: (s) => (p, avg) => s.avgs[p.id][p.ind][avg],
+        diff: (s) => (p) => s.avgs[p.id][p.ind]['d'],
+        average: (s) => (p, col, years) => {
             const d = s.data(p);
-            const d_f = d.filter(e => isDefined(e[col]) && e.year <= y1 && e.year >= y0).map(e => e[col]);
+            const d_f = d.filter(e => isDefined(e[col]) && e.year <= years[1] && e.year >= years[0]).map(e => e[col]);
             const avg = d_f.reduce( ( p, c ) => p + c, 0 ) / d_f.length;
             return avg;
         },
@@ -59,6 +64,35 @@ export const stationStore = defineStore('station', {
 
                     this[p.period][p.id][p.ind] = sources[p.period].trans(d3.csvParse(response.data))
                 })
+        },
+        load(p) {
+            // console.log(`station store: load ${id} ${ind} ${period}`)
+            return axios
+                .get(`/data/stations/${p.id}/${p.ind}-${sources[p.period].src}`, { responseType: 'text',})
+                .then(response => {
+                    if (!(p.id in this[p.period]))
+                        this[p.period][p.id] = {};
+
+                    this[p.period][p.id][p.ind] = sources[p.period].trans(d3.csvParse(response.data));
+                })
+        },
+        calcAvgs(p, periods) {
+            // console.log(`calcAvgs ${p.id}`)
+            const avgs = [
+                { name: "p1", years: periods[0].years },
+                { name: "p2", years: periods[1].years },
+            ];
+
+            if (!(p.id in this.avgs))
+                this.avgs[p.id] = {}
+
+            const avg = {
+                p1: { y: periods[0].years, v: this.average(p, "v1", periods[0].years) },
+                p2: { y: periods[1].years, v: this.average(p, "v1", periods[1].years) },
+            }
+            avg.d = avg.p2.v - avg.p1.v;
+
+            this.avgs[p.id][p.ind] = avg;
         },
         onLoaded(p, f) {
             // console.log('onLoaded')

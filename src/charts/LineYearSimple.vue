@@ -15,11 +15,11 @@ import { baseStore } from '@/stores/base.js'
 import { isDefined, baseFormatter } from '@/globals.js'
 
 export default {
-    props: ['id', 'ind', 'periods'],
+    props: ['id', 'ind'],
     setup() {
         return {
             stationStore: stationStore(),
-            baseStore: baseStore()
+            baseStore: baseStore(),
         }
     },
     data: () => ({
@@ -27,7 +27,7 @@ export default {
             t: 15, r: 5, b: 5, l: 50
         },
         width: 0,
-        height: 80
+        height: 80,
     }),
     computed: {
         innerWidth () { return this.width - (this.m.l + this.m.r); },
@@ -36,13 +36,19 @@ export default {
         unit () { return this.baseStore.indicator(this.ind).unit; },
     },
     mounted() {
-        this.width = this.$refs.container.clientWidth
+        this.periods = this.baseStore.periods;
+        this.width = this.$refs.container.clientWidth;
         this.svg = d3.select(this.$refs.container).select("svg");
         this.g = this.svg.select("g.inner");
-        this.stationStore.onLoaded(this.p, d => {
-            this.data = d.filter(d => d.date.getFullYear() >= 1936)
-            this.plot();
-        })
+        this.data = this.stationStore.data(this.p)
+            .filter(d => d.date.getFullYear() >= 1936);
+        this.plot();
+        // this.stationStore.onLoaded(this.p, d => {
+        //     // console.log(this.p)
+        //     // this.stationStore.calcAvgs(this.p, this.periods);
+        //     this.data = d.filter(d => d.date.getFullYear() >= 1936);
+        //     this.plot();
+        // })
     },
     methods: {
         plot() {
@@ -96,16 +102,29 @@ export default {
 
             const avgs = [
                 {name: "avg", years: xExtent},
-                {name: "avgP1", years: this.periods[0].years},
-                {name: "avgP2", years: this.periods[1].years},
+                {name: "avgP1", source: 'p1'},
+                {name: "avgP2", source: 'p2'},
             ];
 
             avgs.forEach(i => {
-                const avg = this.stationStore.average(this.p, time, i.years[0], i.years[1]);
+                let avg = null;
+                let years = null;
+
+                if (i.source === undefined) {
+                    avg = this.stationStore.average(this.p, time, i.years)
+                    years = i.years;
+                } else {
+                    // console.log(this.stationStore.calcedAvg(this.p, i.source))
+                    // console.log(`line ${this.p.id}`)
+                    const avgInfo = this.stationStore.calcedAvg(this.p, i.source);
+                    avg = avgInfo.v;
+                    years = avgInfo.y;
+                }
+
                 const avg_y = y(avg);
 
-                const x1 = x(i.years[0]);
-                const x2 = x(i.years[1]);
+                const x1 = x(years[0]);
+                const x2 = x(years[1]);
 
                 this.g.append("rect")
                     .attr("class", `avg ${i.name}`)

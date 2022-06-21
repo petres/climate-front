@@ -1,19 +1,20 @@
 <template>
     <div class="map-wrap">
 		<div class="map" ref="mapContainer"></div>
-        <legend-aux :scale="getColor" :formatter="formatNumber" :text="text"/>
+        <legend-aux :scale="getColor" :formatter="formatNumber" :text="baseStore.periodsTextLegend()"/>
     </div>
 </template>
 
 <script>
 import { baseStore } from '@/stores/base.js'
+import { stationStore } from '@/stores/station.js'
 import { Map, Marker, Popup } from 'maplibre-gl';
 import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
 import LegendAux from '@/aux/Legend.vue'
 import * as d3 from "d3";
 import { diffFormatter } from '@/globals.js'
 
-const state = { lng: 14.5501, lat: 47.5162, zoom: 4 };
+const state = { lng: 14.5501, lat: 47.5162, zoom: 3 };
 const style = {
 	"version": 8,
 	"sources": {
@@ -48,7 +49,7 @@ const circleLayer = {
 	'paint': {
 		'circle-radius': 4,
 		'circle-blur': 0,
-		'circle-stroke-color': "#888",
+		'circle-stroke-color': "#444",
 		'circle-stroke-width': 1,
 		'circle-color': ['get', 'color'],
 		// 'circle-color': '#008729',
@@ -87,7 +88,8 @@ export default {
         return {
             map,
             mapContainer,
-            baseStore: baseStore()
+			baseStore: baseStore(),
+            stationStore: stationStore(),
         };
     },
 	components: {
@@ -99,13 +101,14 @@ export default {
 				// .filter(s => s.indices.includes("tg"))
 				// .filter(s => s.id < 100)
 				.map(s => {
-					const value = this.getValue(s)
+					// const value = this.getValue(s)
+					const value = this.stationStore.diff({id: s.id, ind: 'tg'});
 					return {
 						'type': 'Feature',
 						'properties': {
 							'id': `${s.id}`,
-							'name': `${s.name} | ${diffFormatter(value/10)} °C`,
-							'value': value,
+							// 'name': `${s.name} | ${diffFormatter(value/10)} °C`,
+							// 'value': value,
 							'color': this.getColor(value),
 						},
 						'geometry': {
@@ -124,13 +127,12 @@ export default {
 		},
 		getColor: null,
 		formatNumber: diffFormatter,
-		text: "Diff. 2010-2022 <br/>to 1940-1960 <br/>in °C",
 		getValue: d => (d.mean_2010_td - d.mean_1940_1960)/10,
 	}),
     mounted: function() {
 		const self = this;
 
-		self.stations = this.baseStore.stations();
+		const stations = this.baseStore.stations();
 
 		const extent = d3.extent(this.baseStore.stations(), this.getValue);
 		self.getColor = d3.scaleLinear()
@@ -167,9 +169,9 @@ export default {
 
 			self.map.on('mousemove', function (e) {
 				const p = [e.lngLat.lng, e.lngLat.lat];
-				const mi = d3.minIndex(self.stations, i => Math.sqrt((i.coords[0] - p[0]) ** 2 + (i.coords[1] - p[1]) ** 2));
-				self.setMarker(self.stations[mi].id, 'hover')
-				self.$emit('highlight', self.stations[mi].id)
+				const mi = d3.minIndex(stations, i => Math.sqrt((i.coords[0] - p[0]) ** 2 + (i.coords[1] - p[1]) ** 2));
+				self.setMarker(stations[mi].id, 'hover')
+				self.$emit('highlight', stations[mi].id)
 			});
 
 			// self.map.on('mouseleave', 'stations', function () {
@@ -205,7 +207,7 @@ export default {
 
 			if (id !== null && id !== undefined) {
 				const info = this.baseStore.station(id);
-				const value = this.getValue(info);
+				const value = this.stationStore.diff({id: id, ind: 'tg'});;
 				var el = document.createElement('div');
 				el.className = `marker ${type}`;
 				el.style.backgroundColor = this.getColor(value);

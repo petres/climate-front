@@ -1,14 +1,14 @@
 <template>
     <div class="station">
         <div class="station-inner" style="position: relative">
-            <h2>Temperature Station Data</h2>
+            <h2>Temperature Stations</h2>
             <p>
-                Meteorological station data collected by <a target="_blank" href="https://www.ecad.eu/dailydata/index.php">ECAD</a>
-                is visualized on this page. In this dataset more than 15.000 stations included, we are only using
-                a subsample which have a long history available.
+                We visualize meteorological station data collected by <a target="_blank" href="https://www.ecad.eu/dailydata/index.php">ECAD</a>.
+                This dataset consists of more than 15.000 stations with various time series (avg. temp, max temp, precipitation, ...),
+                only stations with a long history are shown by now.
             </p><p>
                 The source code of this website can be found at <a target="_blank" href="https://github.com/petres/climate-front">https://github.com/petres/climate-front</a>.
-                Any contribution is welcome!
+                Still under heavy development, any contribution is welcome! For any suggestion, contact me: <a target="_blank" href="https://twitter.com/preschn">@preschn</a>
             </p>
             <div id="stationList" ref='stationList'>
                 <ul id="station-list" class="list">
@@ -18,7 +18,7 @@
                         <span class="year_min">First<br/>Year</span>
                         <span class="diff">Diff.</span>
                     </li> -->
-                    <list-entry :periods='periods' v-for='e in stations' :station="e" @highlight="id => { removeHighlight(); $emit('highlight', id) }"/>
+                    <list-entry v-for='e in stations' :station="e" @highlight="id => { removeHighlight(); $emit('highlight', id) }"/>
                 </ul>
             </div>
         </div>
@@ -38,7 +38,7 @@ export default {
     components: {
         ListEntry
     },
-    props: ["highlight", "periods"],
+    props: ["highlight"],
     data: () => ({
         stations: []
     }),
