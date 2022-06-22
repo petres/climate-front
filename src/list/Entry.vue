@@ -4,7 +4,7 @@
             <div class="country"><span>{{ station.country }}</span></div>
             <div class="name" :title='station.name'><span>{{ station.name }}</span></div>
             <div class="year_min" title="Start year of temperature time series"><span>↦</span> <span>{{ station.year_min }}</span></div>
-            <div class="diff" :title="baseStore.periodsTextTitle()"><span>Δ</span> <span>{{ diffFormatter(diff) }} °C</span></div>
+            <div class="diff" :title="baseStore.periodsTextTitle()"><span>Δ</span> <span>{{ change }}</span></div>
         </div>
         <div class="line">
             <line-year-simple :id='station.id' ind='tg'/>
@@ -29,8 +29,7 @@ export default {
         baseStore: baseStore(),
     }),
     data: () => ({
-        diffFormatter: diffFormatter,
-        diff: 0,
+        change: "...",
     }),
     computed: {
         p () { return {id: this.station.id, ind: "tg", period: 'yearly'}; },
@@ -38,7 +37,7 @@ export default {
     mounted() {
         this.stationStore.onLoaded(this.p, d => {
             this.stationStore.calcAvgs(this.p, this.baseStore.periods);
-            this.diff = this.stationStore.diff(this.p);
+            this.change = diffFormatter(this.stationStore.getChange(this.p)) + " °C";
         })
     }
 }

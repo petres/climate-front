@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios';
 import * as d3 from "d3";
 import { isDefined } from '@/globals.js'
+import { baseStore } from '@/stores/base.js'
 
 const sources = {
     daily: {
@@ -35,17 +36,17 @@ const sources = {
     },
 };
 
-
 export const stationStore = defineStore('station', {
     state: () => ({
-        yearly: {}, monthly: {}, daily: {}, avgs: {},
+        yearly: {}, monthly: {}, daily: {},
+        avgs: {}, change: {},
     }),
     getters: {
         loaded: (s) => (p) => p.id in s[p.period] && p.ind in s[p.period][p.id],
         calced: (s) => (p) => p.id in s.avgs && p.ind in s.avgs[p.id],
         data: (s) => (p) => s[p.period][p.id][p.ind],
         calcedAvg: (s) => (p, avg) => s.avgs[p.id][p.ind][avg],
-        diff: (s) => (p) => s.avgs[p.id][p.ind]['d'],
+        getChange: (s) => (p) => s.avgs[p.id][p.ind]['d'],
         average: (s) => (p, col, years) => {
             const d = s.data(p);
             const d_f = d.filter(e => isDefined(e[col]) && e.year <= years[1] && e.year >= years[0]).map(e => e[col]);
@@ -93,6 +94,23 @@ export const stationStore = defineStore('station', {
             avg.d = avg.p2.v - avg.p1.v;
 
             this.avgs[p.id][p.ind] = avg;
+        },
+        calcChangeAggs() {
+            //
+
+            const ids = baseStore().stations().map(d => d.id)
+            const diffs = ids.map(id => this.getChange({id: id, ind: 'tg'}))
+
+            const extent = d3.extent(diffs);
+            const getColor = d3.scaleLinear()
+                .domain(extent)
+                // .domain([0, extent[1]])
+                // .domain([-extent[1], extent[1]])
+                .range(['yellow', '#f23c06'])
+
+            this.change = {
+                extent, getColor
+            }
         },
         onLoaded(p, f) {
             // console.log('onLoaded')

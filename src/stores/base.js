@@ -12,7 +12,7 @@ const sources = {
                     s.indices = [s.indices];
             });
 
-            return Object.assign({}, ...d.filter(d => d.id < 30).map((x) => ({[x.id]: x})))
+            // return Object.assign({}, ...d.filter(d => d.id < 30).map((x) => ({[x.id]: x})))
             return Object.assign({}, ...d.map((x) => ({[x.id]: x})))
         },
     },
