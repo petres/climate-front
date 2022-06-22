@@ -14,7 +14,7 @@ import LegendAux from '@/aux/Legend.vue'
 import { diffFormatter } from '@/globals.js'
 import * as d3 from "d3";
 
-const state = { lng: 14.5501, lat: 47.5162, zoom: 3 };
+const state = { lng: 14.5501, lat: 47.5162, zoom: 4 };
 
 const style = {
 	"version": 8,
@@ -99,10 +99,9 @@ export default {
 	},
 	computed: {
 		stationSource () {
-			stationSourceTemplate.data.features = this.baseStore.stations()
-				// .filter(s => s.indices.includes("tg"))
-				// .filter(s => s.id < 100)
-				.map(s => {
+			stationSourceTemplate.data.features = this.stationStore.calcedStations()
+				.map(id => {
+					const s = this.baseStore.station(id);
 					// const value = this.getValue(s)
 					const change = this.stationStore.getChange({id: s.id, ind: 'tg'});
 					return {
@@ -133,50 +132,18 @@ export default {
     mounted: function() {
 		const self = this;
 
-
-
-
-
 		this.map.on('load', function () {
-			self.stationStore.calcChangeAggs();
 			self.map.addSource('stations', self.stationSource);
 			self.map.addLayer(circleLayer);
 
-			// self.map.on('click', 'stations', function (e) {
-			// 	// console.log(e.features[0].properties.name)
-			// 	// popup
-			// 	// 	.setLngLat(e.lngLat)
-			// 	// 	.setHTML(e.features[0].properties.name)
-			// 	// 	.addTo(self.map);
-			//
-			// 	self.$router.push({ name: 'station', params: { id: e.features[0].properties.id }})
-			// 		//alert(`Clicked ${id}`);
-			// });
-
-			// self.map.on('mouseenter', 'stations', function (e) {
-			// 	self.map.getCanvas().style.cursor = 'pointer';
-			// 	// popup
-			// 	// 	.setLngLat(e.lngLat)
-			// 	// 	.setHTML(e.features[0].properties.name)
-			// 	// 	.addTo(self.map);
-			//
-			// 	self.setMarker(e.features[0].properties.id, 'hover')
-			// 	self.$emit('highlight', e.features[0].properties.id)
-			// });
-			const stations = self.baseStore.stations();
+			const stations = self.stationStore.calcedStations().map(id => ({id: id, coords: self.baseStore.station(id).coords}))
+			// console.log(stations)
 			self.map.on('mousemove', function (e) {
 				const p = [e.lngLat.lng, e.lngLat.lat];
 				const mi = d3.minIndex(stations, i => Math.sqrt((i.coords[0] - p[0]) ** 2 + (i.coords[1] - p[1]) ** 2));
 				self.setMarker(stations[mi].id, 'hover')
 				self.$emit('highlight', stations[mi].id)
 			});
-
-			// self.map.on('mouseleave', 'stations', function () {
-			// 	self.map.getCanvas().style.cursor = '';
-			// 	popup.remove();
-			// 	self.setMarker(null, 'hover')
-			// 	self.$emit('highlight', null)
-			// });
 
 			self.$watch(
 				() => self.id,

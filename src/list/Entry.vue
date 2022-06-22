@@ -29,16 +29,10 @@ export default {
         baseStore: baseStore(),
     }),
     data: () => ({
-        change: "...",
     }),
     computed: {
         p () { return {id: this.station.id, ind: "tg", period: 'yearly'}; },
+        change () { return  diffFormatter(this.stationStore.getChange(this.p)) + " °C"; },
     },
-    mounted() {
-        this.stationStore.onLoaded(this.p, d => {
-            this.stationStore.calcAvgs(this.p, this.baseStore.periods);
-            this.change = diffFormatter(this.stationStore.getChange(this.p)) + " °C";
-        })
-    }
 }
 </script>

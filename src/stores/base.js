@@ -12,7 +12,7 @@ const sources = {
                     s.indices = [s.indices];
             });
 
-            // return Object.assign({}, ...d.filter(d => d.id < 30).map((x) => ({[x.id]: x})))
+            // return Object.assign({}, ...d.filter(d => d.id < 3000).map((x) => ({[x.id]: x})))
             return Object.assign({}, ...d.map((x) => ({[x.id]: x})))
         },
     },
@@ -27,7 +27,7 @@ export const baseStore = defineStore('base', {
     state: () => ({
         data: {},
         periods: [
-            { years: [1940, 1990]},
+            { years: [1900, 2000]},
             { years: [2000, 2022]},
         ],
     }),
@@ -41,13 +41,13 @@ export const baseStore = defineStore('base', {
     },
     actions: {
         load() {
-            Object.keys(sources).forEach(d => {
-                axios
+            return Promise.all(Object.keys(sources).map(d => {
+                return axios
                     .get(`/${sources[d].src}`)
                     .then(response => {
                         this.data[d] = sources[d].trans(response.data)
                     })
-            });
+            }));
         },
     },
 })

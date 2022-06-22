@@ -105,15 +105,6 @@ export default {
             this.g.append("g")
                 .call(yAxis);
 
-            // const avg = this.stationStore.average(this.p, time);
-            // const avgY = y(avg);
-            // this.g.append("line")
-            //     .attr("class", 'avg')
-            //     .attr("x1", 0)
-            //     .attr("y1", avgY)
-            //     .attr("x2", this.innerWidth)
-            //     .attr("y2", avgY)
-
             const avgs = [
                 {name: "avg", years: xExtent},
                 // {name: "avgP1", years: periods.p1},
@@ -121,7 +112,7 @@ export default {
             ];
 
             avgs.forEach(i => {
-                const avg = this.stationStore.average(this.p, time, i.years[0], i.years[1]);
+                const avg = this.stationStore.average(this.p, time, i.years);
                 const avg_y = y(avg);
 
                 const x1 = x(i.years[0]);
@@ -145,6 +136,15 @@ export default {
                     .attr("x2", x2)
                     .attr("y2", avg_y)
                     .attr("y2", avg_y)
+            // const avg = this.stationStore.average(this.p, time);
+            // const avgY = y(avg);
+            // this.g.append("line")
+            //     .attr("class", 'avg')
+            //     .attr("x1", 0)
+            //     .attr("y1", avgY)
+            //     .attr("x2", this.innerWidth)
+            //     .attr("y2", avgY)
+
             });
 
             this.g.append("path")

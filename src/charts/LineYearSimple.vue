@@ -36,19 +36,13 @@ export default {
         unit () { return this.baseStore.indicator(this.ind).unit; },
     },
     mounted() {
-        this.periods = this.baseStore.periods;
+        // this.periods = ;
         this.width = this.$refs.container.clientWidth;
         this.svg = d3.select(this.$refs.container).select("svg");
         this.g = this.svg.select("g.inner");
         this.data = this.stationStore.data(this.p)
-            .filter(d => d.date.getFullYear() >= 1936);
+            .filter(d => d.date.getFullYear() >= this.baseStore.periods[0].years[0] - 2);
         this.plot();
-        // this.stationStore.onLoaded(this.p, d => {
-        //     // console.log(this.p)
-        //     // this.stationStore.calcAvgs(this.p, this.periods);
-        //     this.data = d.filter(d => d.date.getFullYear() >= 1936);
-        //     this.plot();
-        // })
     },
     methods: {
         plot() {
@@ -150,14 +144,15 @@ export default {
                         .text(t)
 
                     this.g.append("text")
-                        .attr("class", `avg ${i.name}`)
+                        .attr("class", `avg avgFront ${i.name}`)
                         .attr("x", x)
                         .attr("y", avg_y)
                         .text(t)
                 }
-
-
             });
+
+            this.g.select('text.avgBack').raise();
+            this.g.select('text.avgFront').raise();
         }
     },
 }
