@@ -12,8 +12,8 @@ const sources = {
                     s.indices = [s.indices];
             });
 
-            // return Object.assign({}, ...d.filter(d => d.id < 3000).map((x) => ({[x.id]: x})))
-            return Object.assign({}, ...d.map((x) => ({[x.id]: x})))
+            return Object.assign({}, ...d.filter(d => d.year_min <= 1900).map((x) => ({[x.id]: x})))
+            // return Object.assign({}, ...d.map((x) => ({[x.id]: x})))
         },
     },
     indicators: {
@@ -36,8 +36,8 @@ export const baseStore = defineStore('base', {
         station: (s) => (id) => s.data.stations[id],
         indicator: (s) => (id) => s.data.indicators[id],
         stations: (s) => () => Object.values(s.data.stations),
-        periodsTextTitle: (s) => () => `Temperature differance between mean ${s.periods[0].years[0]} - ${s.periods[0].years[1]} and mean ${s.periods[1].years[0]} - ${s.periods[1].years[1]}`,
-        periodsTextLegend: (s) => () => `Differance of mean<br/>between ${s.periods[1].years[0]}-${s.periods[1].years[1]}<br/>and ${s.periods[0].years[0]}-${s.periods[0].years[1]}<br/>in °C`,
+        periodsTextTitle: (s) => () => `Temperature difference between mean ${s.periods[0].years[0]} - ${s.periods[0].years[1]} and mean ${s.periods[1].years[0]} - ${s.periods[1].years[1]}`,
+        periodsTextLegend: (s) => () => `Difference of mean<br/>between ${s.periods[1].years[0]}-${s.periods[1].years[1]}<br/>and ${s.periods[0].years[0]}-${s.periods[0].years[1]}<br/>in °C`,
     },
     actions: {
         load() {
