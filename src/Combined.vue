@@ -1,7 +1,10 @@
 <template>
     <div class="combined">
-        <station v-if='id' :id='id' />
-        <intro v-else :highlight='highlightList' @highlight="id => highlightMap = id"/>
+
+        <keep-alive>
+            <station v-if='id' :id='id' />
+            <intro v-else :highlight='highlightList' @highlight="id => highlightMap = id"/>
+        </keep-alive>
         <station-map :id='id' :highlight='highlightMap' @highlight="id => highlightList = id"/>
     </div>
 </template>
