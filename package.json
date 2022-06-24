@@ -6,7 +6,6 @@
   "scripts": {
     "build": "webpack --config build/prod.js",
     "dev": "webpack-dev-server --config build/dev.js",
-    "download": "rsync -arv --delete pugsley.int.wsr.at:~/shares/xxl/ohne_backup/R-Packages/cache/ECAD/web/* assets/data",
     "upload": "rsync -arv --delete --exclude 'data' --exclude 'data.tar.gz' dist/ climate.abteil.org:/www/htdocs/w01cd68d/climate.abteil.org/",
     "deploy": "rm -rf dist && npm run build && npm run upload"
   },
