@@ -14,3 +14,18 @@ The [European Climate Assessment & Dataset project](https://www.ecad.eu/) provid
 
 The data used is not provided in this repository. The raw data can be downloaded [here](https://www.ecad.eu/dailydata/predefinedseries.php).
 The raw data needs some preparation steps which are quite straightforward, I will add the code of these preparation steps in an extra repo. To run this repo you can download the prepared data used on the web server [https://climate.abteil.org/data](https://climate.abteil.org/data.tar.gz).
+
+## run
+```bash
+# get code
+git clone https://github.com/petres/climate-front/
+# get data (> 1 GB)
+wget https://climate.abteil.org/data.tar.gz
+# extract data
+tar xzf data.tar.gz
+cd climate-front
+# install dependencies
+npm install
+# run dev server
+npm run dev
+ ```
