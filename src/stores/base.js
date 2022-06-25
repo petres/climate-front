@@ -30,12 +30,15 @@ export const baseStore = defineStore('base', {
             { years: [1900, 2000]},
             { years: [2000, 2022]},
         ],
+        status: 'loading',
     }),
     getters: {
-        loaded: (s) => Object.keys(sources).filter(d => !(d in s.data)).length == 0,
+        loaded: (s) => () => s.status == "loaded",
+        stations: (s) => () => Object.values(s.data.stations),
+
         station: (s) => (id) => s.data.stations[id],
         indicator: (s) => (id) => s.data.indicators[id],
-        stations: (s) => () => Object.values(s.data.stations),
+
         periodsTextTitle: (s) => () => `Temperature difference between mean ${s.periods[0].years[0]} - ${s.periods[0].years[1]} and mean ${s.periods[1].years[0]} - ${s.periods[1].years[1]}`,
         periodsTextLegend: (s) => () => `Difference of mean<br/>between ${s.periods[1].years[0]}-${s.periods[1].years[1]}<br/>and ${s.periods[0].years[0]}-${s.periods[0].years[1]}<br/>in °C`,
     },
@@ -47,7 +50,12 @@ export const baseStore = defineStore('base', {
                     .then(response => {
                         this.data[d] = sources[d].trans(response.data)
                     })
-            }));
+            })).then(() => {
+                this.status = 'loaded';
+            }).catch(err => {
+                this.status = 'error';
+                console.log(err.message); // some coding error in handling happened
+            });
         },
     },
 })
