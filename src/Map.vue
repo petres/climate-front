@@ -1,7 +1,7 @@
 <template>
     <div class="map-wrap">
 		<div class="map" ref="mapContainer"></div>
-        <legend-aux :scale="stationStore.change.getColor" :formatter="formatter" :text="baseStore.periodsTextLegend()"/>
+        <legend-aux :scale="stationStore.change.getColor" :formatter="formatter" :text="`Difference of mean<br/>between ${baseStore.periodsText()[0]}<br/>and  ${baseStore.periodsText()[1]}<br/>in °C`"/>
     </div>
 </template>
 

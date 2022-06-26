@@ -11,6 +11,7 @@
                 Still under heavy development, any contribution is welcome! For any suggestion, contact me: <a target="_blank" href="https://twitter.com/preschn">@preschn</a>
             </p>
             <div id="stationList" ref='stationList'>
+                {{ stations.length }} Stations with enough data in the period {{ baseStore.periodsText()[0] }} and {{ baseStore.periodsText()[1] }}.
                 <ul id="station-list" class="list">
                     <!-- <li class="header">
                         <span class="country">Ctry</span>

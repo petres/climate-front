@@ -6,9 +6,6 @@ $colorAvg: map.get($colors, "avg");
 $colorPos: map.get($colors, "pos");
 $colorNeg: map.get($colors, "neg");
 
-text {
-    font-family: Helvetica, Arial, sans-serif;
-}
 svg {
     g.x-axis {
         font-size: 12px;

@@ -6,15 +6,21 @@
 @import 'list';
 
 
+* {
+    font-family: 'M1cregular';
+}
 
 body {
     margin: 0;
     padding: 0;
-    font-family: Helvetica, sans-serif;
 }
 
-text {
-    font-family: Helvetica, sans-serif;
+a {
+    color: darken(map.get($colors, "avg"), 13%);
+    &:hover {
+        // color: darken(map.get($colors, "avg"), 15%);
+        font-weight: bolder;
+    }
 }
 
 p {
@@ -22,7 +28,9 @@ p {
 }
 
 h2 {
-    margin-bottom: 0.4em;
+    margin-bottom: 0.2em;
+    font-size: 1.8em;
+    font-weight: lighter;
 }
 
 .combined {
@@ -64,10 +72,10 @@ h2 {
     margin-bottom: 25px;
     .indicator-header {
         height: 20px;
-        h2 {
+        h3 {
             padding: 0 3px;
             font-size: 1.1em;
-            font-family: monospace;
+            // font-family: monospace;
             background-color: black;
             color: white;
             display: inline;

@@ -4,7 +4,7 @@
         <span class='sub'>
             Id: {{ station.id }},
             Height: {{ station.height }},
-            Coords: {{ station.coords }}<br/>
+            Coords: {{ station.coords }}, 
             Indices: {{ station.indices }}
         </span>
     </div>

@@ -59,6 +59,7 @@ export default {
                 .ticks(7)
                 .tickFormat(x => `${x}`)
                 .tickSizeInner(-this.innerHeight)
+                .tickPadding(5)
 
             this.g.append("g")
                 .call(xAxis);
@@ -71,6 +72,7 @@ export default {
                 .ticks(2)
                 .tickFormat(x => `${x.toFixed(1)} ${this.unit}`)
                 .tickSizeInner(-this.innerWidth)
+                .tickPadding(5)
 
             this.g.append("g")
                 .call(yAxis);
