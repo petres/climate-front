@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios';
 
 const periods = [
-    { years: [1930, 2000]},
+    { years: [1920, 1980]},
     { years: [2000, 2022]},
 ];
 

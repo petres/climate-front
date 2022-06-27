@@ -10,15 +10,12 @@
                 The source code of this website can be found at <a target="_blank" href="https://github.com/petres/climate-front">https://github.com/petres/climate-front</a>.
                 Still under heavy development, any contribution is welcome! For any suggestion, contact me: <a target="_blank" href="https://twitter.com/preschn">@preschn</a>
             </p>
-            <div id="stationList" ref='stationList'>
-                {{ stations.length }} Stations with enough data in the period {{ baseStore.periodsText()[0] }} and {{ baseStore.periodsText()[1] }}.
+            <div id="stationList">
+                <p>
+                    There are {{ stations.length }} Stations with enough data in the selected comparision periods {{ baseStore.periodsText()[0] }} and {{ baseStore.periodsText()[1] }}.
+                    These stations are ordered by the difference of the mean temperatures:
+                </p>
                 <ul id="station-list" class="list">
-                    <!-- <li class="header">
-                        <span class="country">Ctry</span>
-                        <span class="name">Name</span>
-                        <span class="year_min">First<br/>Year</span>
-                        <span class="diff">Diff.</span>
-                    </li> -->
                     <list-entry v-for='e in stations' :station="e" @highlight="id => { removeHighlight(); $emit('highlight', id) }"/>
                 </ul>
             </div>
@@ -28,12 +25,14 @@
 
 <script>
 import { baseStore } from '@/stores/base.js';
+import { stationStore } from '@/stores/station.js';
 import ListEntry from "@/list/Entry.vue";
 
 export default {
     setup() {
         return {
             baseStore: baseStore(),
+            stationStore: stationStore(),
         }
     },
     components: {
@@ -49,16 +48,21 @@ export default {
             this.removeHighlight()
             if (id !== null) {
                 const el = document.getElementById(`station-${id}`);
-                el.classList.add('highlight');
-                el.scrollIntoView({
-                    // behavior: "smooth",
-                    block: "center",
-                });
+                if (el) {
+                    el.classList.add('highlight');
+                    el.scrollIntoView({
+                        // behavior: "smooth",
+                        block: "center",
+                    });
+                }
             }
         }
     },
     mounted() {
-        this.stations = this.baseStore.stations();
+        const stations = this.stationStore.calcedStations();
+        const p = {ind: "tg", period: 'yearly'};
+        stations.sort((a, b) => this.stationStore.getChange({...p, ...{id: b}}) - this.stationStore.getChange({...p, ...{id: a}}));
+        this.stations = stations.map(id => this.baseStore.station(id));
     },
     methods: {
         removeHighlight() {
