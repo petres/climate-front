@@ -14,7 +14,7 @@ import LegendAux from '@/aux/Legend.vue'
 import { diffFormatter } from '@/globals.js'
 import * as d3 from "d3";
 
-const state = { lng: 14.5501, lat: 47.5162, zoom: 4 };
+const state = { lng: 20, lat: 55, zoom: 3 };
 
 const style = {
 	"version": 8,
