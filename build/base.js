@@ -57,7 +57,7 @@ module.exports = {
             publicPath: '/',
         }),
         new MiniCssExtractPlugin({
-            filename: 'main.[hash].css',
+            filename: 'main.[fullhash].css',
         }),
         new FaviconsWebpackPlugin('assets/icons/climate.png'),
     ],

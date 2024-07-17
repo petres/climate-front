@@ -7,6 +7,7 @@ $colorPos: map.get($colors, "pos");
 $colorNeg: map.get($colors, "neg");
 
 svg {
+    user-select: none;
     g.x-axis {
         font-size: 12px;
         font-weight: bold;
@@ -31,7 +32,6 @@ svg {
             stroke: none
         }
     }
-    user-select: none;
 }
 
 
@@ -167,13 +167,13 @@ svg.line-year-chart {
                     font-size: 14px;
                 }
                 .header {
-                    &.year { fill: $colorYear; }
-                    &.avg  { fill: $colorAvg; }
-
                     font-size: 12px;
                     letter-spacing: 1px;
                     font-weight: bold;
                     fill: #666;
+                    
+                    &.year { fill: $colorYear; }
+                    &.avg  { fill: $colorAvg; }
 
                     &.pos { fill: $colorPos; }
                     &.neg { fill: $colorNeg; }

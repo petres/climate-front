@@ -74,6 +74,9 @@ $marker-border: 0px;
 
 
 #legend-overlay {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
     .text {
         font-size: 11px;
         text-align: right;
@@ -84,11 +87,8 @@ $marker-border: 0px;
         bottom: 120px;
         right: 0;
     }
-    position: absolute;
-    right: 20px;
-    bottom: 20px;
 }
 
-#legend-overlay text {
-    // font-weight: bold;
-}
+// #legend-overlay text {
+//     // font-weight: bold;
+// }

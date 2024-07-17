@@ -14,7 +14,7 @@ module.exports = merge(baseConfig, {
         liveReload: true,
         hot: false,
         static: {
-            directory: path.join(__dirname, "../../data/"),
+            directory: path.join(__dirname, "../assets/data/"),
             publicPath: '/data',
             watch: false,
         },

@@ -1,5 +1,5 @@
 {
-  "name": "climate ecad",
+  "name": "climate-ecad",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -14,26 +14,26 @@
   "devDependencies": {
     "@babel/core": "^7",
     "@babel/preset-env": "^7",
-    "axios": "^0.27",
+    "axios": "^1",
     "babel-eslint": "^10",
-    "babel-loader": "^8",
+    "babel-loader": "^9 ",
     "bootstrap": "^5",
-    "copy-webpack-plugin": "^11",
-    "css-loader": "^6",
+    "copy-webpack-plugin": "^12 ",
+    "css-loader": "^7",
     "d3": "^7",
-    "favicons": "^6",
-    "favicons-webpack-plugin": "^5",
+    "favicons": "^7",
+    "favicons-webpack-plugin": "^6",
     "html-webpack-plugin": "^5",
-    "maplibre-gl": "^2",
+    "maplibre-gl": "^4",
     "mini-css-extract-plugin": "^2",
     "pinia": "^2",
     "sass": "^1",
-    "sass-loader": "^13",
+    "sass-loader": "^14",
     "vue": "^3",
     "vue-loader": "^17",
     "vue-router": "^4",
     "webpack": "^5",
-    "webpack-cli": "^4",
-    "webpack-dev-server": "^4"
+    "webpack-cli": "^5",
+    "webpack-dev-server": "^5"
   }
 }
