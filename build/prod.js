@@ -7,7 +7,8 @@ module.exports = merge(baseConfig, {
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
-              { from: "assets/.htaccess", to: "" },
+                { from: "assets/.htaccess", to: "" },
+                { from: "assets/data", to: "data" },
             ],
         }),
     ],

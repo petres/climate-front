@@ -6,32 +6,39 @@ import { baseStore } from '@/stores/base.js'
 
 const sources = {
     daily: {
-        src: 'd.csv',
-        trans: d => d.map(d => ({
-            date: new Date(d.date),
-            v1: +d.value/10,
-            v7: +d.avg7/10,
-            v15: +d.avg15/10,
-            v31: +d.avg31/10,
-            v365: +d.avg365/10,
-        }))
+        url: (i) => `/api/d/station/${i.id}/type/${i.ind}/format/csv`,
+        trans: d => d.map(d => {
+            d.value == "" ? d.value = NaN : +d.value;
+            d.avg7 == "" ? d.avg7 = NaN : +d.avg7;
+            d.avg15 == "" ? d.avg15 = NaN : +d.avg15;
+            d.avg31 == "" ? d.avg31 = NaN : +d.avg31;
+            d.avg365 == "" ? d.avg365 = NaN : +d.avg365;
+            return {
+                date: new Date(d.date),
+                v1: +d.value/10,
+                v7: +d.avg7/10,
+                v15: +d.avg15/10,
+                v31: +d.avg31/10,
+                v365: +d.avg365/10,
+            }
+        })
     },
-    // monthly: {
-    //     src: 'm.csv',
-    //     trans: d => d.map(d => ({
-    //         date: new Date(`${d.date}-01`),
-    //         v1: +d.value/10,
-    //         v13: +d.avg13/10,
-    //         v61: +d.avg61/10,
-    //         v121: +d.avg121/10,
-    //     }))
-    // },
     yearly: {
-        src: 'y.csv',
+        url: (i) => `/api/y/station/${i.id}/type/${i.ind}/format/csv`,
+        code: 'y',
         trans: d => d.map(d => ({
             date: new Date(`${d.date}-01-01`),
             year: +d.date,
-            v1: +d.value/10,
+            v1: (d.value == "" ? d.value = NaN : +d.value)/10,
+        }))
+    },
+    yearly_combined: {
+        url: (i) => `/api/y/type/${i.ind}/format/csv`,
+        trans: d => d.map(d => ({
+            id: d.id,
+            date: new Date(`${d.date}-01-01`),
+            year: +d.date,
+            v1: (d.value == "" ? d.value = NaN : +d.value)/10,
         }))
     },
 };
@@ -58,14 +65,28 @@ export const stationStore = defineStore('station', {
     },
     actions: {
         load(p) {
+            const self = this;
+            const s = sources[p.period]
             // console.log(`station store: load ${id} ${ind} ${period}`)
             return axios
-                .get(`/data/stations/${p.id}/${p.ind}-${sources[p.period].src}`, { responseType: 'text',})
+                .get(s.url(p), { responseType: 'text',})
                 .then(response => {
-                    if (!(p.id in this[p.period]))
-                        this[p.period][p.id] = {}
+                    if (p.period == 'yearly_combined') {
+                        const d = s.trans(d3.csvParse(response.data))
 
-                    this[p.period][p.id][p.ind] = sources[p.period].trans(d3.csvParse(response.data))
+                        const g = Object.groupBy(d, ({ id }) => id)
+                        Object.entries(g).forEach(([id, data]) => {
+                            if (!(id in this['yearly']))
+                                this['yearly'][id] = {}
+
+                            self['yearly'][id][p.ind] = data
+                        })
+                    } else {
+                        if (!(p.id in this[p.period]))
+                            self[p.period][p.id] = {}
+
+                        self[p.period][p.id][p.ind] = s.trans(d3.csvParse(response.data))
+                    }
                 })
         },
         calcAvgs(p, periods) {
@@ -110,12 +131,28 @@ export const stationStore = defineStore('station', {
             const bs = baseStore();
             const ids = bs.stations().map(d => d.id);
 
-            Promise.all(ids.map((id) => {
-                let p = {id: id, ind: ind, period: 'yearly'}
-                return self.load(p).then(function() {
-                    self.calcAvgs(p, bs.periods)
-                })
-            })).then(() => {
+            // each station
+            // Promise.all(ids.map((id) => {
+            //     let p = {id: id, ind: ind, period: 'yearly'}
+            //     return self.load(p).then(function() {
+            //         self.calcAvgs(p, bs.periods)
+            //     })
+            // })).then(() => {
+            //     self.calcChangeAggs();
+            //     self.yearsLoaded = true;
+            // })
+
+            // combined
+            let p = {ind: ind, period: 'yearly_combined'}
+            self.load(p).then(() => {
+                ids.forEach((id) => {
+                    p.id = id;
+                    self.calcAvgs({
+                        id: id, 
+                        ind: ind,
+                        period: 'yearly'
+                    }, bs.periods)
+                });
                 self.calcChangeAggs();
                 self.yearsLoaded = true;
             })

@@ -3,7 +3,7 @@
         <div class="station-inner" style="position: relative">
             <router-link :to="{ path: '/' }" style="position: absolute; right: 0; text-decoration: none; z-index: 10;">✕</router-link>
             <station-header :id='id'/>
-            <indicator v-for='i in station.indices' :id='id' :ind='i'/>
+            <indicator v-for='i in station.indices.filter(d => ["tg"].includes(d))' :id='id' :ind='i'/>
         </div>
     </div>
 </template>

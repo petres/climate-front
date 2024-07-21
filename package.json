@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config build/prod.js",
     "dev": "webpack-dev-server --config build/dev.js",
-    "upload": "rsync -arv --delete --exclude 'data' --exclude 'data.tar.gz' dist/ climate.abteil.org:/www/htdocs/w01cd68d/climate.abteil.org/",
+    "upload": "rsync -arv --delete dist/ arch.explorer100:/var/www/ecad/front/",
     "deploy": "rm -rf dist && npm run build && npm run upload"
   },
   "author": "Peter Reschenhofer",

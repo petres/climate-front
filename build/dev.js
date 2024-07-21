@@ -18,6 +18,16 @@ module.exports = merge(baseConfig, {
             publicPath: '/data',
             watch: false,
         },
+        proxy: [{
+            context: ['/api'],
+            target: {
+                host: "127.0.0.1",
+                protocol: 'http:',
+                port: 8888
+            },
+            // target: "https://ecad.abteil.org",
+            // changeOrigin: true,
+        }]
     },
     devtool: 'source-map',
     plugins: [

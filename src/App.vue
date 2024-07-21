@@ -9,8 +9,8 @@
             <router-view></router-view>
         </div>
         <div v-else class="status">
-            <div class="loading" v-if="baseStore.status == 'loading'"><span>⌛</span><br/>Loading Base Data ...</div>
-            <div class="loading" v-if="baseStore.status == 'loaded' && !stationStore.yearsLoaded"><span>⌛</span><br/>Loading Yearly Data ...</div>
+            <div class="loading" v-if="baseStore.status == 'loading'"><span>...</span><br/>Loading Base Data ...</div>
+            <div class="loading" v-if="baseStore.status == 'loaded' && !stationStore.yearsLoaded"><span>...</span><br/>Loading Yearly Data ...</div>
             <div class="error" v-if="baseStore.status == 'error'"><span>⚠</span><br/>Error loading data</div>
         </div>
     </div>

@@ -36,7 +36,7 @@ export default {
         }
     },
     data: () => ({
-        smooth: 'v1',
+        smooth: 'v15',
         valueType: 'rel',
         years: {
             s: 2020,
