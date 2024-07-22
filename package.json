@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config build/prod.js",
     "dev": "webpack-dev-server --config build/dev.js",
-    "upload": "rsync -arv --delete dist/ arch.explorer100:/var/www/ecad/front/",
-    "deploy": "rm -rf dist && npm run build && npm run upload"
+    "deploy": "./bin/deploy.sh"
   },
   "author": "Peter Reschenhofer",
   "private": true,

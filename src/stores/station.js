@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
 import axios from 'axios';
 import * as d3 from "d3";
-import { isDefined } from '@/globals.js'
+import { isDefined, dataUrls } from '@/globals.js'
 import { baseStore } from '@/stores/base.js'
+
 
 const sources = {
     daily: {
-        url: (i) => `/api/d/station/${i.id}/type/${i.ind}/format/csv`,
+        url: (i) => dataUrls.station(i.id, i.ind, 'd'),
         trans: d => d.map(d => {
             d.value == "" ? d.value = NaN : +d.value;
             d.avg7 == "" ? d.avg7 = NaN : +d.avg7;
@@ -24,7 +25,7 @@ const sources = {
         })
     },
     yearly: {
-        url: (i) => `/api/y/station/${i.id}/type/${i.ind}/format/csv`,
+        url:  (i) => dataUrls.station(i.id, i.ind, 'y'),
         code: 'y',
         trans: d => d.map(d => ({
             date: new Date(`${d.date}-01-01`),
@@ -33,7 +34,7 @@ const sources = {
         }))
     },
     yearly_combined: {
-        url: (i) => `/api/y/type/${i.ind}/format/csv`,
+        url:  (i) => dataUrls.combined(i.ind),
         trans: d => d.map(d => ({
             id: d.id,
             date: new Date(`${d.date}-01-01`),

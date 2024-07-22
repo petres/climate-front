@@ -62,7 +62,7 @@ export default {
                     t[year] = [];
                 t[year].push(d);
             });
-            console.log(t)
+            // console.log(t)
             return t;
         },
         line() {

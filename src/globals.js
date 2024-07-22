@@ -1,5 +1,3 @@
-export { isDefined, periods, diffFormatter, baseFormatter };
-
 import * as d3 from "d3";
 
 const isDefined = v => typeof v == 'number' && !isNaN(v)
@@ -11,3 +9,18 @@ const periods = {
 }
 const diffFormatter = d3.format("+.1f")
 const baseFormatter = d3.format(".1f")
+
+const dataUrls = {
+    station: (id, ind, freq, format = "csv") => `/api/${freq}/station/${id}/type/${ind}/format/${format}`,
+    combined: (ind, format = "csv") => `/api/y/type/${ind}/format/${format}`,
+    
+}
+
+export { 
+    isDefined, 
+    periods, 
+    diffFormatter, 
+    baseFormatter,
+
+    dataUrls,
+};
