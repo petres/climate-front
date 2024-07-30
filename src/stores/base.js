@@ -1,10 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios';
 
-const periods = [
-    { years: [1920, 1980]},
-    { years: [2000, 2022]},
-];
+import { periods } from '@/globals.js'
 
 const sources = {
     stations: {
@@ -17,7 +14,7 @@ const sources = {
                     s.indices = [s.indices];
             });
 
-            return Object.assign({}, ...d.filter(d => d.year_min <= periods[0].years[0]).map((x) => ({[x.id]: x})))
+            return Object.assign({}, ...d.filter(d => d.year_min <= periods.p1[0]).map((x) => ({[x.id]: x})))
             // return Object.assign({}, ...d.map((x) => ({[x.id]: x})))
         },
     },
@@ -41,8 +38,8 @@ export const baseStore = defineStore('base', {
         station: (s) => (id) => s.data.stations[id],
         indicator: (s) => (id) => s.data.indicators[id],
 
-        periodsText: (s) => (sep = '-') => s.periods.map(p => p.years.join(sep)),
-        periodsTextLegend: (s) => () => `Difference of mean<br/>between ${s.periods[1].years[0]}-${s.periods[1].years[1]}<br/>and ${s.periods[0].years[0]}-${s.periods[0].years[1]}<br/>in °C`,
+        periodsText: (s) => (sep = '-') => [s.periods.p2.join(sep), s.periods.p1.join(sep)],
+        periodsTextLegend: (s) => () => `Difference of mean<br/>between ${s.periods.p2[0]}-${s.periods.p2[1]}<br/>and ${s.periods.p1[0]}-${s.periods.p1[1]}<br/>in °C`,
     },
     actions: {
         load() {

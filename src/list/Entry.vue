@@ -17,10 +17,11 @@
 
 <script>
 import { baseStore } from '@/stores/base.js';
-import { stationStore } from '@/stores/station.js'
+import { stationStore } from '@/stores/station.js';
+import { formatters } from '@/globals.js';
 
 import LineYearSimple from "@/charts/LineYearSimple.vue";
-import { diffFormatter } from '@/globals.js'
+
 
 export default {
     props: ["station"],
@@ -36,7 +37,7 @@ export default {
     computed: {
         p () { return {id: this.station.id, ind: "tg", period: 'yearly'}; },
         change () { return this.stationStore.getChange(this.p); },
-        changeText () { return  `${diffFormatter(this.change)} °C`; },
+        changeText () { return  `${formatters.diff(this.change)} °C`; },
     },
 }
 </script>

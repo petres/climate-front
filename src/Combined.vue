@@ -1,6 +1,5 @@
 <template>
     <div class="combined">
-
         <keep-alive>
             <station v-if='id' :id='id' />
             <intro v-else :highlight='highlightList' @highlight="id => highlightMap = id"/>
@@ -25,13 +24,13 @@ export default {
         highlightMap: null,
         highlightList: null
     }),
-    created: function() {
-        // this.$store.dispatch('init')
-    },
-    methods: {
-        show(e) {
-            console.log(e)
-        }
-    }
+    // created: function() {
+    //     // this.$store.dispatch('init')
+    // },
+    // methods: {
+    //     show(e) {
+    //         console.log(e)
+    //     }
+    // }
 }
 </script>

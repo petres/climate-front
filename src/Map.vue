@@ -11,7 +11,7 @@ import { stationStore } from '@/stores/station.js'
 import { Map, Marker } from 'maplibre-gl';
 import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
 import LegendAux from '@/aux/Legend.vue'
-import { diffFormatter } from '@/globals.js'
+import { formatters } from '@/globals.js'
 import * as d3 from "d3";
 
 const state = { lng: 20, lat: 55, zoom: 3 };
@@ -109,7 +109,7 @@ export default {
 						'properties': {
 							'id': `${s.id}`,
 							'name': `${s.name}`,
-							// 'name': `${s.name} | ${diffFormatter(change/10)} °C`,
+							// 'name': `${s.name} | ${formatters.diff(change/10)} °C`,
 							'change': change,
 							'color': this.stationStore.change.getColor(change),
 						},
@@ -127,7 +127,7 @@ export default {
 			selected: null,
 			hover: null
 		},
-		formatter: diffFormatter,
+		formatter: formatters.diff,
 	}),
     mounted: function() {
 		const self = this;
@@ -142,7 +142,7 @@ export default {
 				const p = [e.lngLat.lng, e.lngLat.lat];
 				const mi = d3.minIndex(stations, i => Math.sqrt((i.coords[0] - p[0]) ** 2 + (i.coords[1] - p[1]) ** 2));
 				self.setMarker(stations[mi].id, 'hover')
-				self.$emit('highlight', stations[mi].id)
+				// self.$emit('highlight', stations[mi].id)
 			});
 
 			self.$watch(
@@ -165,7 +165,10 @@ export default {
 		setMarker(id, type = "selected") {
 			const self = this;
 			if (this.markers[type] !== null) {
-				this.markers[type].remove()
+				if (this.id == this.markers[type].id)
+					return;
+
+				this.markers[type].m.remove()
 				this.markers[type] = null;
 			}
 
@@ -177,19 +180,24 @@ export default {
 				el.style.backgroundColor = this.stationStore.change.getColor(change);
 				el.innerHTML = `<span>${this.formatter(change)}<br/>°C</span>`;
 
-				this.markers[type] = new Marker(el)
-					.setLngLat(info.coords)
-					.addTo(this.map);
+				// console.log(el)
 
-				if(!this.map.getBounds().contains(info.coords)) {
-					this.map.flyTo({
-						center: info.coords,
-						essential: true,
-						speed: 1
-					});
+				this.markers[type] = {
+					m: new Marker({element: el})
+						.setLngLat(info.coords)
+						.addTo(this.map),
+					id: id,
 				}
 
-				this.markers[type].getElement().addEventListener('click', () => {
+				// if(!this.map.getBounds().contains(info.coords)) {
+				// 	this.map.flyTo({
+				// 		center: info.coords,
+				// 		essential: true,
+				// 		speed: 1
+				// 	});
+				// }
+
+				this.markers[type].m.getElement().addEventListener('click', () => {
 					self.$router.push({ name: 'station', params: { id: id }})
 				});
 			}

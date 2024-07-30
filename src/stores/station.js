@@ -91,20 +91,20 @@ export const stationStore = defineStore('station', {
                 })
         },
         calcAvgs(p, periods) {
-            if (baseStore().station(p.id).year_min > periods[0].years[0])
+            if (baseStore().station(p.id).year_min > periods.p1[0])
                 return;
             // console.log(`calcAvgs ${p.id}`)
             const avgs = [
-                { name: "p1", years: periods[0].years },
-                { name: "p2", years: periods[1].years },
+                { name: "p1", years: periods.p1 },
+                { name: "p2", years: periods.p2 },
             ];
 
             if (!(p.id in this.avgs))
                 this.avgs[p.id] = {}
 
             const avg = {
-                p1: { y: periods[0].years, v: this.average(p, "v1", periods[0].years) },
-                p2: { y: periods[1].years, v: this.average(p, "v1", periods[1].years) },
+                p1: { y: periods.p1, v: this.average(p, "v1", periods.p1) },
+                p2: { y: periods.p2, v: this.average(p, "v1", periods.p2) },
             }
             avg.d = avg.p2.v - avg.p1.v;
 

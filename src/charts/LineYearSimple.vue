@@ -12,7 +12,7 @@
 import * as d3 from "d3";
 import { stationStore } from '@/stores/station.js'
 import { baseStore } from '@/stores/base.js'
-import { isDefined, baseFormatter } from '@/globals.js'
+import { isDefined, formatters, periods } from '@/globals.js'
 
 export default {
     props: ['id', 'ind'],
@@ -41,7 +41,7 @@ export default {
         this.svg = d3.select(this.$refs.container).select("svg");
         this.g = this.svg.select("g.inner");
         this.data = this.stationStore.data(this.p)
-            .filter(d => d.date.getFullYear() >= this.baseStore.periods[0].years[0] - 2);
+            .filter(d => d.date.getFullYear() >= periods.p1[0] - 2);
         this.plot();
     },
     methods: {
@@ -50,7 +50,9 @@ export default {
             const af = d => d[time];
 
             this.g.selectAll("*").remove();
-            const xExtent = d3.extent(this.data, d => d.year);
+            // const xExtent = d3.extent(this.data, d => d.year);
+            const xExtent = [periods.p1[0] - 2, new Date().getFullYear()];
+            // console.log(xExtent)
             const x = d3.scaleLinear()
                 .domain(xExtent)
                 .range([0, this.innerWidth]);
@@ -138,7 +140,7 @@ export default {
 
                 if (i.name != "avg") {
                     const x = (i.name == "avgP1") ? x2 : x1;
-                    const t = `${baseFormatter(avg)} ${this.unit}`
+                    const t = `${formatters.base(avg)} ${this.unit}`
                     this.g.append("text")
                         .attr("class", `avg avgBack ${i.name}`)
                         .attr("x", x)
